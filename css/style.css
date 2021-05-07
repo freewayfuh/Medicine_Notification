@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+}
+.wrapper {
+    width: 100vw;
+    max-width: 550px;
+}
+
+.title {
+    font-weight: bold;
+    margin-bottom: 1em;
+}
+
+
+#pill-img {
+    width: 8vw !important; 
+    min-width: 100px !important;
+
+}
+
+img {
+    width: 10vw !important; 
+    min-width: 100px !important; 
+}
+
+img.col-sm-3:nth-child(odd) {
+    content: url("../src/img/calender.PNG");
+}
+
+img.col-sm-3:nth-child(even) {
+    content: url("../src/img/pill.PNG");
+}
+
+button {
+    position: fixed;
+    bottom: 5em;
+    
+    width: 70vw;
+    max-width: 440px;
+    border-radius: 12px  !important;
+}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <title>新增藥物提醒</title>
+  </head>
+  <body>
+    藥物名稱<br>
+    <input type="text" id="med_name"><br>
+	  <br>
+    開始日期<br>
+    <input type="date" id="start_date"><br>
+	  <br>
+    總共幾顆藥<br>
+    <input type="number" id="med_amount"><br>
+	  <br>
+    頻率<br>
+    <input type="text" id="freq"><br>
+	  <br>
+    時間<br>
+    <input type="time" id="take_time"><br>
+	  <br>
+    <button id="complete">完成</button>
+    <button id="test_btn">測試</button>
+    <div id="test_div">{{user}}</div>
+
+
+  </body>
+  <script>
+    liff.init({
+      liffId:''
+    }).then(() => {
+      //$('#test_div').html(liff.isLoggedIn().toString())
+      let userId
+      liff.getProfile()
+      .then(profile =>{
+        userId = profile.userId
+      })
+      .catch((err) => {
+        console.log('error:', err)
+      })
+
+      $('#complete').click((evnet) => {
+        event.preventDefault()
+        $.get('/add_med_notify', {
+          medName: $('#med_name').val(),
+          startDate: $('#start_date').val(),
+          medAmount: $('#med_amount').val(),
+          freq: $('#freq').val(),
+          takeTime: $('#take_time').val(),
+          userId: userId,
+          }, (data) => {
+            if(data == 'success'){
+              liff.closeWindow()
+              liff.sendMessages([{
+                type: 'text',
+                text: '新增藥物提醒'
+              }]).then(() => {
+                console.log('message sent')   
+              }).catch((err) =>{
+                console.log('error', err)
+              })
+            }
+        })
+      })
+    }).catch(error => {
+      //error callback   
+    })
+
+  </script>
+</html>
