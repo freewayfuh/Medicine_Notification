@@ -37,10 +37,11 @@ app.get('/add_medicine', (req, res) => {
   res.render('add_medicine')
 })
 
-app.get('/medicine_detail', (req, res) => {
-  res.render('medicine_detail')
+/*
+app.get('/add_notify', (req, res) => {
+  res.render('add_notify')
 })
-
+*/
 
 app.post('/webhook', line.middleware(lineConfig), (req, res) => {
   Promise
@@ -59,17 +60,15 @@ app.get('/load-addMedPage', (req, res) => {
 })
 
 app.get('/load-medDetail', (req, res) => {
-  console.log('hahah')
-  res.send('tsting~~~~~~~~~~~~~')
-})
-/*
-app.get('/add_med_notify', (req, res) => {
-  connection.query(`INSERT INTO user_Med(medName, startDate, medAmount, freq, takeTime, userId) VALUES ('${req.query.medName}', '${req.query.startDate}', ${req.query.medAmount}, '${req.query.freq}', '${req.query.takeTime}', '${req.query.userId}')`, (err, result) => {
-    if(err) console.log('fail to insert:', err)
+  console.log(req.query.user_MedId)
+  connection.query(`SELECT * FROM user_Med WHERE user_MedId=${req.query.user_MedId}`, (err, result) => {
+    if(err) console.log('fail to select:', err)
+    //console.log(JSON.stringify(result))
+    res.send(result)
   })
-  res.send('success')
+  //res.send('tsting~~~~~~~~~~~~~')
 })
-*/
+
 
 const client = new line.Client(lineConfig)
 

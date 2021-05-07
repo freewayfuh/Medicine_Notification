@@ -13,9 +13,9 @@
     <div id="urldiv"></div>
   </head>
   <body>
-    <!--<p id='abc'>test</p>-->
   </body>
   <script>
+  $(document).ready(function(){  
     liff.init({
       liffId:'1655949102-WX1rbAJw'
     })
@@ -31,10 +31,12 @@
             if(Object.keys(data).length != 0){
               $.each(data, function (key, value){
                 $('body').append(`<h1>${value.medName}</h1>
-                                  <img src="${value.medPicture}" value='testing'>
+                                  <img src="${value.medPicture}" class='med_img' value='${value.user_MedId}'>
                                   <a href='/medicine_detail'>藥物總剩餘量 ${value.totalAmount}個</a>
-                                  <p class='abc'>每次服用劑量 ${value.onceAmount}個</p>`)
+                                  <p>每次服用劑量 ${value.onceAmount}個</p>`)
               })
+              $('body').append(`<button id='add_med_button'>新增藥物</button>`)
+
             }else{
               $('body').append(`<div class="wrapper row  mx-auto p-5">
                                   <div>
@@ -54,19 +56,6 @@
             }
           }
         })
-/*
-        $('#med_img').click(function(){
-          $('#urldiv').html('adilijadljda')
-
-          event.preventDefault()
-          $.ajax({
-            url: 'load-medDetail',
-            data: $('#med_img').val(),
-            success: function (data){
-              $('body').append(`<h1>${data}dkjwl</h1>`) 
-            }
-          })
-        })*/
 
       })
       .catch((err) => {
@@ -78,8 +67,37 @@
       //error callback   
     })
 
-   $('.abc').click(function(){
-     $('#urldiv').html('ajeldald')
+   $('body').on('click', '.med_img', function(){
+     $('body').empty()
+     $.ajax({
+       url: 'load-medDetail',
+       data: {user_MedId: $(this).attr('value')},
+       success: function (data){
+         $.each(data, function (key, value){
+           $('body').append(`<h1>${value.medName}</h1>`)
+         })
+       }
+     })
+     //$('body').append(`<h1>dwhhedwl</h1>`) 
+   })   
+
+   $('body').on('click', '#add_med_button', function(){
+     $('body').empty()
+/*     
+     $.ajax({
+       url: 'load-medDetail',
+       data: {user_MedId: $(this).attr('value')},
+       success: function (data){
+         $.each(data, function (key, value){
+           $('body').append(`<h1>${value.medName}</h1>`)
+         })
+       }
+     }) 
+*/
+     $('body').append(`<h1>dwhhedwl</h1>`)
    })
-  </script>
+
+   
+  })
+</script>
 </html>
