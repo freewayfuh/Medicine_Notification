@@ -20,12 +20,10 @@
       liffId:'1655949102-WX1rbAJw'
     })
     .then(() => {
-      //let userId
       liff.getProfile()
       .then(profile =>{
-        //userId = profile.userId
         $.ajax({
-          url: 'load-addMedPage',
+          url: 'load-pillBoxPage',
           data: {userId: profile.userId},
           success: function (data){
             if(Object.keys(data).length != 0){
@@ -56,7 +54,6 @@
             }
           }
         })
-
       })
       .catch((err) => {
         console.log('error:', err)
@@ -83,18 +80,9 @@
 
    $('body').on('click', '#add_med_button', function(){
      $('body').empty()
-/*     
-     $.ajax({
-       url: 'load-medDetail',
-       data: {user_MedId: $(this).attr('value')},
-       success: function (data){
-         $.each(data, function (key, value){
-           $('body').append(`<h1>${value.medName}</h1>`)
-         })
-       }
-     }) 
-*/
-     $('body').append(`<h1>dwhhedwl</h1>`)
+     $('body').append(`藥物名稱<input type='text'><br>
+                       藥物總量<input type='number'><br>
+                       每次服用劑量<input type='number'><br>`)
    })
 
    

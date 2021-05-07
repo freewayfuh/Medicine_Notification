@@ -49,14 +49,14 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
     .then((result) => res.json(result))
 })
 
-app.get('/load-addMedPage', (req, res) => {
+app.get('/load-pillBoxPage', (req, res) => {
   console.log(req.query.userId)
   connection.query(`SELECT * FROM user_Med WHERE userId='${req.query.userId}'`,(err, result) => {
     if(err) console.log('fail to select:', err)
     console.log(result)
     res.send(result)
   })
-  //res.send('Hello!!!!!!!')
+
 })
 
 app.get('/load-medDetail', (req, res) => {
