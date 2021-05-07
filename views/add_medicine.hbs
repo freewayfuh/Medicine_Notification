@@ -64,54 +64,36 @@
         //error callback   
       })      
     }
-  $(document).ready(function(){
-    Load_pillBox()
-   $('body').on('click', '.med_img', function(){
-     $('body').empty()
-     $.ajax({
-       url: 'load-medDetail',
-       data: {user_MedId: $(this).attr('value')},
-       success: function (data){
-         $.each(data, function (key, value){
-           $('body').append(`<h1>${value.medName}</h1>`)
-         })
-       }
-     })
-     //$('body').append(`<h1>dwhhedwl</h1>`) 
-   })   
-
-   $('body').on('click', '#add_med_button', function(){
-     $('body').empty()
-     $('body').append(`藥物名稱<input type='text'><br>
-                       藥物總量<input type='number'><br>
-                       每次服用劑量<input type='number'><br>
-                       <button class='add_finish_button'>完成</button>`)
-   })
-
-   $('body').on('click', '.add_finish_button', function(){
-     $('body').empty()
-     Load_pillBox()
-     //$('body').append(`<h1>hahahah</h1>`)
-/*     
-      $.ajax({
-        url: 'load-pillBoxPage',
-        data: {userId: profile.userId},
-        success: function (data){
-          if(Object.keys(data).length != 0){
+    $(document).ready(function(){
+      Load_pillBox()
+      $('body').on('click', '.med_img', function(){
+        $('body').empty()
+        $.ajax({
+          url: 'load-medDetail',
+          data: {user_MedId: $(this).attr('value')},
+          success: function (data){
             $.each(data, function (key, value){
               $('body').append(`<h1>${value.medName}</h1>
-                                <img src="${value.medPicture}" class='med_img' value='${value.user_MedId}'>
-                                <a href='/medicine_detail'>藥物總剩餘量 ${value.totalAmount}個</a>
-                                <p>每次服用劑量 ${value.onceAmount}個</p>`)
+                                <button class='.add_finish_button'>我的藥盒</button>`)
             })
-            $('body').append(`<button id='add_med_button'>新增藥物</button>`)
           }
-        }
-      })
-*/
-   })
+        }) 
+      })   
 
-   
-  })
+      $('body').on('click', '#add_med_button', function(){
+        $('body').empty()
+        $('body').append(`藥物名稱<input type='text'><br>
+                          藥物總量<input type='number'><br>
+                          每次服用劑量<input type='number'><br>
+                          <button class='add_finish_button'>完成</button>`)
+      })
+
+      $('body').on('click', '.add_finish_button', function(){
+        $('body').empty()
+        Load_pillBox()
+      })
+
+    
+    })
 </script>
 </html>
