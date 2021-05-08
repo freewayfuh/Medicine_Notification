@@ -37,11 +37,11 @@ app.get('/add_medicine', (req, res) => {
   res.render('add_medicine')
 })
 
-/*
-app.get('/add_notify', (req, res) => {
-  res.render('add_notify')
+
+app.get('/med_notify', (req, res) => {
+  res.render('med_notify')
 })
-*/
+
 
 app.post('/webhook', line.middleware(lineConfig), (req, res) => {
   Promise
@@ -49,6 +49,7 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
     .then((result) => res.json(result))
 })
 
+//Pill Box
 app.get('/load-pillBoxPage', (req, res) => {
   console.log(req.query.userId)
   connection.query(`SELECT * FROM user_Med WHERE userId='${req.query.userId}'`,(err, result) => {
@@ -66,7 +67,17 @@ app.get('/load-medDetail', (req, res) => {
     //console.log(JSON.stringify(result))
     res.send(result)
   })
-  //res.send('tsting~~~~~~~~~~~~~')
+})
+
+//Notify
+app.get('/load-notifyPage', (req, res) => {
+  console.log(req.query.userId)
+  connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}'`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    console.log(result)
+    res.send(result)
+  })
+
 })
 
 
