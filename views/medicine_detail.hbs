@@ -6,67 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <link href="./css/style.css" rel="stylesheet" type="text/css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    
-    <title>新增提醒</title>
-    <div id="urldiv"></div>
+    <link href="css/medDetail.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">    
+    <title>聯絡人</title>
+
   </head>
   <body>
   </body>
-  <script>
-    liff.init({
-      liffId:'1655949102-QOy7mkzW'
-    })
-    .then(() => {
-      //let userId
-      liff.getProfile()
-      .then(profile =>{
-        //userId = profile.userId
-        $('#urldiv').html('hi!!!!!!!!!!!!!!')
-/*        
-        $.ajax({
-          url: 'load-addMedPage',
-          data: {userId: profile.userId},
-          success: function (data){
-            
-            if(Object.keys(data).length != 0){
-              $.each(data, function (key, value){
-                $('body').append(`<h1>${value.medName}</h1>
-                                  <img src="${value.medPicture}" >
-                                  <p>藥物總剩餘量 ${value.totalAmount}個</p>
-                                  <p>每次服用劑量 ${value.onceAmount}個</p>`)
-              })
-            }else{
-              $('body').append(`<div class="wrapper row  mx-auto p-5">
-                                  <div>
-                                    <h2 class="title">建立我的藥盒</h2>
-                                    <p>
-                                        The problem with Realtimevirus scanners is that they're 
-                                        inherently heavy on the CPU, 
-                                        as they have to hash and compare<br> 
-                                    </p>
-                                    <div class="row  justify-content-center mt-5">
-                                      <img class="col-sm-3">
-                                      <img class="col-sm-3">
-                                    </div>
-                                    <button type="button" class="btn btn-dark mx-auto">新增藥物</button>
-                                  </div>
-                                </div>`)
-            }
-
-          }
-        })
-*/      
-      })
-      .catch((err) => {
-        console.log('error:', err)
-      })
-
-    })
-    .catch(error => {
-      //error callback   
-    })
-
-  </script>
-</html>

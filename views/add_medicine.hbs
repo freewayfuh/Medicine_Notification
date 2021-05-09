@@ -6,94 +6,196 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
-    <link href="./css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/pillBox.css" rel="stylesheet">
+    <link href="css/pageInit.css" rel="stylesheet">
+    <link href="css/medDetail.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     
     <title>我的藥盒</title>
-    <div id="urldiv"></div>
   </head>
   <body>
   </body>
   <script>
-    function Load_pillBox(){
-      liff.init({
-        liffId:'1655949102-WX1rbAJw'
-      })
-      .then(() => {
-        liff.getProfile()
-        .then(profile =>{
-          $.ajax({
-            url: 'load-pillBoxPage',
-            data: {userId: profile.userId},
-            success: function (data){
-              if(Object.keys(data).length != 0){
-                $.each(data, function (key, value){
-                  $('body').append(`<h1>${value.medName}</h1>
-                                    <img src="${value.medPicture}" class='med_img' value='${value.user_MedId}'>
-                                    <a href='/medicine_detail'>藥物總剩餘量 ${value.totalAmount}個</a>
-                                    <p>每次服用劑量 ${value.onceAmount}個</p>`)
-                })
-                $('body').append(`<button id='add_med_button'>新增藥物</button>`)
-
-              }else{
-                $('body').append(`<div class="wrapper row  mx-auto p-5">
-                                    <div>
-                                      <h2 class="title">建立我的藥盒</h2>
-                                      <p>
-                                          The problem with Realtimevirus scanners is that they're 
-                                          inherently heavy on the CPU, 
-                                          as they have to hash and compare<br> 
-                                      </p>
-                                      <div class="row  justify-content-center mt-5">
-                                        <img class="col-sm-3">
-                                        <img class="col-sm-3">
-                                      </div>
-                                      <button type="button" class="btn btn-dark mx-auto">新增藥物</button>
-                                    </div>
-                                  </div>`)
-              }
-            }
-          })
-        })
-        .catch((err) => {
-          console.log('error:', err)
-        })
-
-      })
-      .catch(error => {
-        //error callback   
-      })      
-    }
-    $(document).ready(function(){
-      Load_pillBox()
-      $('body').on('click', '.med_img', function(){
-        $('body').empty()
-        $.ajax({
-          url: 'load-medDetail',
-          data: {user_MedId: $(this).attr('value')},
-          success: function (data){
+    function Load_pillBox(userId){
+      $.ajax({
+        url: 'load-pillBoxPage',
+        data: {userId: userId},
+        success: function (data){
+          $('body').empty()
+          if(Object.keys(data).length != 0){ 
             $.each(data, function (key, value){
-              $('body').append(`<h1>${value.medName}</h1>
-                                <button class='add_finish_button'>我的藥盒</button>`)
+              $('body').append(`<div class="item" id="${value.user_MedId}">
+                                  <div class="med">
+                                    <div class="image"></div>
+                                    <div class="info"></div>
+                                    <div class="name">${value.medName}</div>
+                                    <div class="number">
+                                      <div class="three">
+                                        <div class="one">${value.totalAmount}</div>
+                                        <div class="two">藥物總量</div>
+                                      </div>
+                                      <div class="three">
+                                        <div class="one">${value.onceAmount}</div>
+                                        <div class="two">每次劑量</div>
+                                      </div>
+                                      <div class="three">
+                                        <div class="one">2</div>
+                                        <div class="two">剩餘藥物</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="ope">
+                                    <form>
+                                      <button id="delete" type="button" value="${value.user_MedId}">
+                                        <div class="delete">
+                                          <div><img src="img/delete.png"></div>
+                                          <div>刪除</div>
+                                        </div>
+                                      </button>
+                                    </form>
+                                    <form>
+                                      <button id="edit" type="button" value="${value.user_MedId}">
+                                        <div class="edit">
+                                          <div><img src="img/edit.png"></div>
+                                          <div>編輯</div>
+                                        </div>
+                                      </button>
+                                    </form>
+                                  </div>
+                                </div>`)
+                                
             })
+            $('body').append(`<div class="blank"></div>
+                              <div class="blank1"></div>
+                              <button class="btn btn-dark mx-auto" id="add_med_button" type="button">新增藥物</button>`)
+
+
+          }else{
+            $('body').empty()
+            $('body').append(`<div class="wrapper row mx-auto p-5">
+                                <div>
+                                  <p class="title">建立我的藥盒</p>
+                                  <p>The problem with Realtimevirus scanners is that they're 
+                                    inherently heavy on the CPU, 
+                                    as they have to hash and comparebr 
+                                  </p>
+                                  <p class="row justify-content-center mt-5"><img class="col-sm-4" id="durgbox_img" src="img/drugbox.png" alt=""></p>
+                                  <button class="btn btn-dark mx-auto" id="add_med_button" type="button">新增藥物</button>
+                                </div>
+                              </div>`)
           }
-        }) 
-      })   
-
-      $('body').on('click', '#add_med_button', function(){
-        $('body').empty()
-        $('body').append(`藥物名稱<input type='text'><br>
-                          藥物總量<input type='number'><br>
-                          每次服用劑量<input type='number'><br>
-                          <button class='add_finish_button'>完成</button>`)
-      })
-
-      $('body').on('click', '.add_finish_button', function(){
-        $('body').empty()
-        Load_pillBox()
-      })
-
+        }
+      })     
+    }
     
+    function Load_pillDetail(){
+      $('body').empty()
+      $('body').append(`<form>
+                        <div class="add">
+                          <div class="med_name">
+                            <div><img src="img/medicine.png"></div>
+                            <div>藥物名稱</div>
+                          </div>
+                          <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
+                          <div class="pic">
+                            <div><img src="img/medicine.png"></div>
+                            <div>藥物照片</div>
+                          </div>
+                          <div class="pic1">
+                            <div><img src="img/graph.png"></div>
+                            <div>上傳照片</div>
+                            <div>(每種藥物僅可上傳一種照片)</div>
+                            <label class="upload"><input id="pic" type="file"></label>		
+                          </div>
+                          <div class="total">
+                            <div><img src="img/medicine.png"></div>
+                            <div>藥物總量</div>
+                            <div>(單位:個)</div>
+                          </div>
+                          <div class="total1"><input id="total" type="number" placeholder="1" value=""></div>
+                          <div class="each">
+                            <div><img src="img/medicine.png"></div>
+                            <div>每次服用劑量</div>
+                            <div>(單位:個)</div>
+                          </div>
+                          <div class="each1"><input id="each" type="text" placeholder="0.5" value=""></div>
+                        </div>
+                        <div class="blank1"></div>
+                        <button id="create" class="btn btn-dark mx-auto create" type="button">完成</button>
+                        </form>`)      
+    }
+
+    liff.init({
+      liffId:'1655949102-WX1rbAJw'
     })
+    .then(() => {
+      liff.getProfile()
+      .then(profile =>{
+        $(document).ready(function(){
+          Load_pillBox(profile.userId)
+
+
+          $('body').on('click', '#add_med_button', function(){        
+            Load_pillDetail()       
+          })
+
+          $('body').on('click', '#create', function(){            
+            $.ajax({
+              url: 'load-medDetail',
+              data: {
+                userId: profile.userId,
+                medName: $('#med_name').val(),
+                totalAmount: $('#total').val(),
+                onceAmount: $('#each').val()
+                
+              },
+              success: function (data){
+                Load_pillBox(profile.userId)          
+              }
+            })         
+          })
+
+          $('body').on('click', '#edit', function(){
+            $.ajax({
+              url: '/edit-med',
+              data: {
+                user_MedId: $(this).attr('value')               
+              },
+              success: function (data){
+                Load_pillDetail()                
+                $.each(data, function (key, value){   
+                  $('#med_name').val(value.medName)
+                  $('#total').val(value.totalAmount)
+                  $('#each').val(value.onceAmount)
+                })       
+              }
+            })                
+          })
+
+
+          $('body').on('click', '#delete', function(){
+            $.ajax({
+              url: '/delete-med',
+              data: {
+                user_MedId: $(this).attr('value')               
+              },
+              success: function (data){
+                Load_pillBox(profile.userId)
+              }
+            })                
+          })          
+        
+        })        
+      })
+      .catch((err) => {
+        console.log('error:', err)
+      })
+
+    })
+    .catch(error => {
+      //error callback   
+    })     
+
+
 </script>
 </html>

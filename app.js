@@ -29,19 +29,22 @@ connection.connect(err => {
 
 })
 
-//app.use(express.static(`${__dirname}/dist`))
+app.use(express.static(`${__dirname}/dist`))
 app.set('view engine', 'hbs')
+
+
 
 //route
 app.get('/add_medicine', (req, res) => {
   res.render('add_medicine')
 })
-
+app.get('/medicine_detail', (req, res) => {
+  res.render('medicine_detail')
+})
 
 app.get('/med_notify', (req, res) => {
   res.render('med_notify')
 })
-
 
 app.post('/webhook', line.middleware(lineConfig), (req, res) => {
   Promise
@@ -54,20 +57,39 @@ app.get('/load-pillBoxPage', (req, res) => {
   console.log(req.query.userId)
   connection.query(`SELECT * FROM user_Med WHERE userId='${req.query.userId}'`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    console.log(result)
+    //console.log(result)
     res.send(result)
   })
 
 })
+
 
 app.get('/load-medDetail', (req, res) => {
-  console.log(req.query.user_MedId)
-  connection.query(`SELECT * FROM user_Med WHERE user_MedId=${req.query.user_MedId}`, (err, result) => {
+  connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.userId}')`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    //console.log(JSON.stringify(result))
-    res.send(result)
+    //console.log(result)
+    res.send('success')
   })
 })
+
+
+app.get('/edit-med', (req, res) => {
+  console.log(req.query.user_MedId)
+  connection.query(`SELECT * FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    res.send(result)
+  })  
+})
+
+
+app.get('/delete-med', (req, res) => {
+  console.log(req.query.user_MedId)
+  connection.query(`DELETE FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
+    if(err) console.log('fail to delete:', err)
+    res.send('delete success')
+  })  
+})
+
 
 //Notify
 app.get('/load-notifyPage', (req, res) => {

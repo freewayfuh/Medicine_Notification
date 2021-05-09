@@ -1,0 +1,107 @@
+.add {
+display: grid;
+grid-template-columns: 11vw 75vw 11vw;
+grid-template-rows: 6vw 10vw 1vw 10vw 3vw 10vw 1vw 25vw 3vw 10vw 1vw 10vw 3vw 10vw 1vw 10vw 40vw;
+grid-column-gap: 0px;
+grid-row-gap: 0px;
+}
+.med_name{
+grid-area: 2/2/3/3;
+}
+.name1{
+grid-area: 4/2/5/3;  
+}
+.pic{
+grid-area: 6/2/7/3;  
+}
+.pic1{
+grid-area: 8/2/9/3;
+border-style:dotted;
+border-color:#747474;
+display:flex;
+flex-direction:column;
+justify-content:flex-end;
+align-items:center;  
+}
+.pic1 div:nth-child(1) img{
+width:11.2vw;
+height:8vw;
+margin-bottom:1vw;  
+}
+.pic1 div:nth-child(2){
+font-size:3vw;
+font-weight:bold;
+margin-bottom:1vw;  
+}
+.pic1 div:nth-child(3){
+font-size:2vw;
+margin-bottom:1.25vw;  
+}
+.total{
+grid-area: 10/2/11/3; 
+}
+.total1{
+grid-area: 12/2/13/3; 
+}
+.each{
+grid-area: 14/2/15/3; 
+}
+.each1{
+grid-area: 16/2/17/3; 
+}
+.med_name,.pic,.total,.each{
+font-size:4vw;
+font-weight:bold;
+display:flex;
+align-items:center;	
+}
+.med_name img,.pic img,.total img,.each img{
+margin-right:3vw;
+margin-bottom:1.25vw;
+width:4vw;
+height:4vw;  
+}
+#total,#each{
+width:75vw;
+height:10vw;
+font-size:6vw;
+border-radius:1vw;
+text-align:center;
+color:#c4c4c4;  
+}
+.upload{
+width:75vw;
+height:25vw;
+position:absolute;  
+}
+#pic{
+display:none;
+}
+#med_name{
+width:75vw;
+height:10vw;
+font-size:4vw;
+border-radius:1vw;
+color:#c4c4c4;	
+}
+.total div:nth-child(2){
+margin-right:34vw;	
+}
+.each div:nth-child(2){
+margin-right:26vw;  
+}
+.blank1{
+position:fixed;
+bottom:0vw;
+height:5em;
+width:100vw;
+background-color:white;  
+}
+#create{
+    position: fixed;
+    bottom: 1.25em;
+    left:15vw;
+    border-radius: 12px  !important;
+    width: 70vw;
+    max-width: 440px;
+}
