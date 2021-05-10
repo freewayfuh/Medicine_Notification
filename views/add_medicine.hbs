@@ -96,7 +96,7 @@
                             <div><img src="img/medicine.png"></div>
                             <div>藥物名稱</div>
                           </div>
-                          <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
+                          <div class="name1"><input id="med_name" type="text" placeholder="請輸入藥物名稱" value=""></div>
                           <div class="pic">
                             <div><img src="img/medicine.png"></div>
                             <div>藥物照片</div>
@@ -121,7 +121,8 @@
                           <div class="each1"><input id="each" type="text" placeholder="0.5" value=""></div>
                         </div>
                         <div class="blank1"></div>
-                        <button id="create" class="btn btn-dark mx-auto create" type="button">完成</button>
+                        <button id="create" class="btn btn-dark mx-auto create" type="button" value="insert">完成</button>
+                        <input id="med_id" type="hidden" value="">
                         </form>`)      
     }
 
@@ -141,13 +142,14 @@
 
           $('body').on('click', '#create', function(){            
             $.ajax({
-              url: 'load-medDetail',
+              url: 'add-med',
               data: {
                 userId: profile.userId,
                 medName: $('#med_name').val(),
                 totalAmount: $('#total').val(),
-                onceAmount: $('#each').val()
-                
+                onceAmount: $('#each').val(),
+                queryCond: $('#create').val(),
+                user_MedId: $('#med_id').val()
               },
               success: function (data){
                 Load_pillBox(profile.userId)          
@@ -162,11 +164,13 @@
                 user_MedId: $(this).attr('value')               
               },
               success: function (data){
-                Load_pillDetail()                
+                Load_pillDetail()
+                $('#create').val('update')                
                 $.each(data, function (key, value){   
                   $('#med_name').val(value.medName)
                   $('#total').val(value.totalAmount)
                   $('#each').val(value.onceAmount)
+                  $('#med_id').val(value.user_MedId)
                 })       
               }
             })                

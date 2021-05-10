@@ -64,12 +64,18 @@ app.get('/load-pillBoxPage', (req, res) => {
 })
 
 
-app.get('/load-medDetail', (req, res) => {
-  connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.userId}')`,(err, result) => {
-    if(err) console.log('fail to select:', err)
-    //console.log(result)
-    res.send('success')
-  })
+app.get('/add-med', (req, res) => {  
+  if(req.query.queryCond == 'insert'){
+    connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.userId}')`,(err, result) => {
+      if(err) console.log('fail to insert:', err)
+    })
+  }else if(req.query.queryCond == 'update'){
+    connection.query(`UPDATE user_Med SET medName='${req.query.medName}', totalAmount=${req.query.totalAmount}, onceAmount=${req.query.onceAmount} WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
+      if(err) console.log('fail to update:', err)
+    })
+     
+  }
+  res.send('success')
 })
 
 
