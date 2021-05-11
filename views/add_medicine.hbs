@@ -67,7 +67,7 @@
             })
             $('body').append(`<div class="blank"></div>
                               <div class="blank1"></div>
-                              <button class="btn btn-dark mx-auto" id="add_med_button" type="button">新增藥物</button>`)
+                              <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
 
 
           }else{
@@ -80,7 +80,7 @@
                                     as they have to hash and comparebr 
                                   </p>
                                   <p class="row justify-content-center mt-5"><img class="col-sm-4" id="durgbox_img" src="img/drugbox.png" alt=""></p>
-                                  <button class="btn btn-dark mx-auto" id="add_med_button" type="button">新增藥物</button>
+                                  <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>
                                 </div>
                               </div>`)
           }
@@ -136,7 +136,7 @@
           Load_pillBox(profile.userId)
 
 
-          $('body').on('click', '#add_med_button', function(){        
+          $('body').on('click', '#add', function(){        
             Load_pillDetail()       
           })
 

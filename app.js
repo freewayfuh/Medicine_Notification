@@ -38,8 +38,8 @@ app.set('view engine', 'hbs')
 app.get('/add_medicine', (req, res) => {
   res.render('add_medicine')
 })
-app.get('/medicine_detail', (req, res) => {
-  res.render('medicine_detail')
+app.get('/contact', (req, res) => {
+  res.render('contact')
 })
 
 app.get('/med_notify', (req, res) => {
@@ -98,14 +98,60 @@ app.get('/delete-med', (req, res) => {
 
 
 //Notify
-app.get('/load-notifyPage', (req, res) => {
+app.get('/get-notify', (req, res) => {
   console.log(req.query.userId)
-  connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}'`,(err, result) => {
+  connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}' ORDER BY notifyTime`,(err, result) => {
     if(err) console.log('fail to select:', err)
     console.log(result)
     res.send(result)
   })
 
+})
+
+app.get('/get-med-notify', (req, res) => {
+  connection.query(`SELECT * FROM Notify_Med, user_Med WHERE user_NotifyId='${req.query.user_NotifyId}' AND Notify_Med.user_MedId = user_Med.user_MedId`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    console.log(result)
+    res.send(result)
+  })
+})
+
+app.get('/pick-med', (req, res) => {
+  console.log(`${req.query.userId}`)
+  connection.query(`SELECT * FROM user_Med WHERE userId='${req.query.userId}'`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    res.send(result)
+  })
+})
+
+app.get('/create-med-notify', (req, res) => {
+  let user_NotifyId
+  connection.query(`INSERT INTO user_Notify(notifyTime, userId) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}')`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+  })
+  connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    user_NotifyId = result[0].user_NotifyId
+  })
+  req.query.user_MedId.forEach(element => {
+    connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${user_NotifyId}, ${element})`,(err, result) => {
+      if(err) console.log('fail to select:', err)
+    })    
+  })
+  res.send('success')
+})
+
+app.get('/edit-notify', (req, res) => {
+  console.log('editing')
+  res.send('success') 
+})
+
+app.get('/delete-notify', (req, res) => {
+  console.log(req.query.user_NotifyId)
+  connection.query(`DELETE FROM user_Notify WHERE user_NotifyId=${req.query.user_NotifyId}`,(err, result) => {
+    if(err) console.log('fail to delete:', err)
+    res.send('delete success')
+  })  
 })
 
 
@@ -121,9 +167,6 @@ function handleEvent(event) {
         if(err) console.log('fail to insert:', err)
       })
       
-      console.log(profile.pictureUrl)
-      console.log(profile.displayName)
-      console.log(profile.userId)
     })
     .catch((err) => {
       console.log('err')

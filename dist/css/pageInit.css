@@ -25,7 +25,7 @@ background-color:white;
 -webkit-transform:translateZ(0) ;
 }
 
-#add_med_button{
+#add{
 position:fixed;
 bottom:1.25em;
 left:15vw;
@@ -35,14 +35,6 @@ max-width:440px;
 -webkit-transform:translateZ(0) ;
 }
 
-/*#add_med_button {
-    position: fixed;
-    bottom: 5em;
-    border-radius: 12px  !important;
-      
-    width: 70vw;
-    max-width: 440px;
-}*/
 
 #durgbox_img {
     width: 10vw !important; 
