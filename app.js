@@ -66,7 +66,7 @@ app.get('/load-pillBoxPage', (req, res) => {
 
 app.get('/add-med', (req, res) => {  
   if(req.query.queryCond == 'insert'){
-    connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.userId}')`,(err, result) => {
+    connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.medPicture}', '${req.query.userId}')`,(err, result) => {
       if(err) console.log('fail to insert:', err)
     })
   }else if(req.query.queryCond == 'update'){
@@ -131,12 +131,11 @@ app.get('/create-med-notify', (req, res) => {
   })
   connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    user_NotifyId = result[0].user_NotifyId
-  })
-  req.query.user_MedId.forEach(element => {
-    connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${user_NotifyId}, ${element})`,(err, result) => {
-      if(err) console.log('fail to select:', err)
-    })    
+    req.query.user_MedId.forEach(element => {
+      connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${result[0].user_NotifyId}, ${element})`,(err, result) => {
+        if(err) console.log('fail to select:', err)
+      })    
+    })
   })
   res.send('success')
 })

@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <script src="js/uploadPicture.js" type="text/javascript"></script>
     <link href="css/pillBox.css" rel="stylesheet">
     <link href="css/pageInit.css" rel="stylesheet">
     <link href="css/medDetail.css" rel="stylesheet">
@@ -26,7 +29,7 @@
             $.each(data, function (key, value){
               $('body').append(`<div class="item" id="${value.user_MedId}">
                                   <div class="med">
-                                    <div class="image"></div>
+                                    <div class="image" style="background-image:url(${value.medPicture})"></div>
                                     <div class="info"></div>
                                     <div class="name">${value.medName}</div>
                                     <div class="number">
@@ -45,22 +48,18 @@
                                     </div>
                                   </div>
                                   <div class="ope">
-                                    <form>
                                       <button id="delete" type="button" value="${value.user_MedId}">
                                         <div class="delete">
                                           <div><img src="img/delete.png"></div>
                                           <div>刪除</div>
                                         </div>
                                       </button>
-                                    </form>
-                                    <form>
                                       <button id="edit" type="button" value="${value.user_MedId}">
                                         <div class="edit">
                                           <div><img src="img/edit.png"></div>
                                           <div>編輯</div>
                                         </div>
                                       </button>
-                                    </form>
                                   </div>
                                 </div>`)
                                 
@@ -90,40 +89,44 @@
     
     function Load_pillDetail(){
       $('body').empty()
-      $('body').append(`<form>
-                        <div class="add">
+
+      $('body').append(`<div class="add">
                           <div class="med_name">
                             <div><img src="img/medicine.png"></div>
                             <div>藥物名稱</div>
                           </div>
-                          <div class="name1"><input id="med_name" type="text" placeholder="請輸入藥物名稱" value=""></div>
+                          <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
                           <div class="pic">
                             <div><img src="img/medicine.png"></div>
                             <div>藥物照片</div>
                           </div>
-                          <div class="pic1">
+                          <div id ="upload-wrap" class="pic1">
                             <div><img src="img/graph.png"></div>
                             <div>上傳照片</div>
                             <div>(每種藥物僅可上傳一種照片)</div>
-                            <label class="upload"><input id="pic" type="file"></label>		
+                            <div><button @click="reload"></button></div>
+                            <label class="upload"><input id="pic" type="file" @change="showpic" accept="image/*"></label>		
                           </div>
                           <div class="total">
                             <div><img src="img/medicine.png"></div>
                             <div>藥物總量</div>
                             <div>(單位:個)</div>
                           </div>
-                          <div class="total1"><input id="total" type="number" placeholder="1" value=""></div>
+                          <div class="total1"><input id="total" type="number" placeholder="20" value="20" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
                           <div class="each">
                             <div><img src="img/medicine.png"></div>
                             <div>每次服用劑量</div>
                             <div>(單位:個)</div>
                           </div>
-                          <div class="each1"><input id="each" type="text" placeholder="0.5" value=""></div>
+                          <div class="each1"><input id="each" type="number" placeholder="1" value="1" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
                         </div>
                         <div class="blank1"></div>
-                        <button id="create" class="btn btn-dark mx-auto create" type="button" value="insert">完成</button>
-                        <input id="med_id" type="hidden" value="">
-                        </form>`)      
+                        <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
+                        <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>
+                        <input id="picURL" type="text" value="">                        
+                        <input id="med_id" type="hidden" value="">`)
+      testupload()
+
     }
 
     liff.init({
@@ -137,7 +140,7 @@
 
 
           $('body').on('click', '#add', function(){        
-            Load_pillDetail()       
+            Load_pillDetail()     
           })
 
           $('body').on('click', '#create', function(){            
@@ -149,7 +152,8 @@
                 totalAmount: $('#total').val(),
                 onceAmount: $('#each').val(),
                 queryCond: $('#create').val(),
-                user_MedId: $('#med_id').val()
+                user_MedId: $('#med_id').val(),
+                medPicture: $('#picURL').val()
               },
               success: function (data){
                 Load_pillBox(profile.userId)          

@@ -1,4 +1,4 @@
-$(document).ready(function() {
+function clock() {
     new Rolldate({
         el: '#hour',
         lang: { 
@@ -21,4 +21,4 @@ $(document).ready(function() {
         value: '10',
         format: 'mm',
     })
-})
+}

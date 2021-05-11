@@ -3,15 +3,21 @@ body{
   }
 .med {
 display: grid;
-grid-template-columns: 5vw 28vw 5vw 0.25vw 56vw 0.25vw 5vw;
-grid-template-rows: 2vw 1vw 14vw 1vw 21vw 0.25vw 2vw;
+grid-template-columns: 5vw 30vw 3.5vw 0.25vw 56vw 0.25vw 5vw;
+grid-template-rows: 2vw 1vw 10vw 1vw 18vw 0.25vw 2vw;
 grid-column-gap: 0px;
 grid-row-gap: 0px;
 margin-bottom: 2vw;
 }
 .image{
   grid-area: 2/2/7/3;
-  background-color:#ebebeb;
+  padding:0;
+  overflow:hidden;
+  background-position:center center;
+  background-repeat:no-repeat;
+  background-size:30vw 30vw;
+  max-width:100%;
+  max-height:100%;
   box-shadow: 0px 1vw 1vw rgba(0, 0, 0, 0.25);  
 }
 .info{
@@ -51,6 +57,7 @@ margin-bottom: 2vw;
   display:flex;
   justify-content:space-between;
   margin:0vw 5vw 0vw 5vw;
+  height:8vw;
 }
 .delete{
   display:flex;
@@ -85,10 +92,10 @@ margin-bottom: 2vw;
   font-size:3vw;  
 }
 .delete:hover{
-  background-color:red;	
+  background-color:#d1513f;	
 }
 .edit:hover{
-  background-color:blue;	
+  background-color:#225783;	
 }
 button{
   background-color:transparent;
@@ -98,4 +105,14 @@ button{
 }
 .item{
   margin-bottom:4vw;
+}
+.blank{
+  height:50vw;
+}
+.blank1{
+  position:fixed;
+  bottom:0vw;
+  height:5em;
+  width:100vw;
+  background-color:white;
 }
