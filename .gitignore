@@ -1,6 +1,3 @@
 config/db.js
 config/line.js
-config/ssl/ca_bundle.crt
-config/ssl/certificate.crt
-config/ssl/private.key
 
