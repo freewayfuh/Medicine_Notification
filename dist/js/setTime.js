@@ -7,7 +7,7 @@ function clock() {
             confirm: 'Confirm',
             hour: '時' 
         },
-        value: '23',
+        value: '',
         format: 'hh'
     })
     new Rolldate({
@@ -18,7 +18,7 @@ function clock() {
             confirm: 'Confirm', 
             min: '分' 
         },
-        value: '10',
+        value: '',
         format: 'mm',
     })
 }

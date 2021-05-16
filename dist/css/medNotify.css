@@ -61,7 +61,39 @@ input[type="button"] {
     background-color: #225783;
     color: #FFFFFF;
 }
-
-.timeCheck{
-    display: none;
-}
+body{
+    font-family:arial;  
+  }
+  .add_remind{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    height:100vh;
+  }
+  .add_remind img{
+    width:37vw;
+    height:37vw;
+  }
+  .add_remind div:nth-child(1){
+    margin-bottom:2vw;	
+  }
+  .add_remind div:nth-child(2){
+    font-size:6.5vw;
+    font-weight:700; 
+    margin-bottom:2vw;	
+  }
+  .add_remind div:nth-child(3){
+    font-size:4.5vw;
+    font-weight:400;
+    margin-bottom:2vw;	
+  }
+  #add{
+      position: fixed;
+      bottom: 1.25em;
+      left:15vw;
+      height:12vw;
+      border-radius: 5vw   !important;
+      width: 70vw;
+      font-size:4.5vw;
+  }

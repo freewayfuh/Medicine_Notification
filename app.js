@@ -6,6 +6,7 @@ const line = require('@line/bot-sdk')
 const line_config = require('./config/line.js')
 const mysql = require('mysql')
 const db_config = require('./config/db.js')
+const { formidable } = require('formidable')
 
 const lineConfig = {
   channelAccessToken: line_config.accessToken,
@@ -65,6 +66,7 @@ app.get('/load-pillBoxPage', (req, res) => {
 
 
 app.get('/add-med', (req, res) => {  
+  console.log('test')
   if(req.query.queryCond == 'insert'){
     connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.medPicture}', '${req.query.userId}')`,(err, result) => {
       if(err) console.log('fail to insert:', err)
@@ -102,7 +104,7 @@ app.get('/get-notify', (req, res) => {
   console.log(req.query.userId)
   connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}' ORDER BY notifyTime`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    console.log(result)
+    //console.log(result)
     res.send(result)
   })
 
@@ -111,7 +113,7 @@ app.get('/get-notify', (req, res) => {
 app.get('/get-med-notify', (req, res) => {
   connection.query(`SELECT * FROM Notify_Med, user_Med WHERE user_NotifyId='${req.query.user_NotifyId}' AND Notify_Med.user_MedId = user_Med.user_MedId`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    console.log(result)
+    //console.log(result)
     res.send(result)
   })
 })
@@ -125,24 +127,50 @@ app.get('/pick-med', (req, res) => {
 })
 
 app.get('/create-med-notify', (req, res) => {
-  let user_NotifyId
-  connection.query(`INSERT INTO user_Notify(notifyTime, userId) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}')`,(err, result) => {
-    if(err) console.log('fail to select:', err)
-  })
-  connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
-    if(err) console.log('fail to select:', err)
+  console.log(req.query.user_MedId)
+
+  if(req.query.queryCond == 'insert'){  
+    console.log('insert')
+    let user_NotifyId
+    connection.query(`INSERT INTO user_Notify(notifyTime, userId) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}')`,(err, result) => {
+      if(err) console.log('fail to select:', err)
+    })
+    connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
+      if(err) console.log('fail to select:', err)
+      req.query.user_MedId.forEach(element => {
+        connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${result[0].user_NotifyId}, ${element})`,(err, result) => {
+          if(err) console.log('fail to select:', err)
+        })    
+      })
+    })
+  }else if(req.query.queryCond.split('_')[0] == 'update'){
+    console.log('update')
+    console.log(req.query.queryCond.split('_')[1])
+    connection.query(`UPDATE user_Notify SET notifyTime='${req.query.hour}:${req.query.min}' WHERE user_NotifyId=${req.query.queryCond.split('_')[1]}`,(err, result) => {
+      if(err) console.log('fail to update:', err)
+    })
+    connection.query(`DELETE FROM Notify_Med WHERE user_NotifyId=${req.query.queryCond.split('_')[1]}`,(err, result) => {
+      if(err) console.log('fail to delete:', err)
+    })
+
     req.query.user_MedId.forEach(element => {
-      connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${result[0].user_NotifyId}, ${element})`,(err, result) => {
-        if(err) console.log('fail to select:', err)
+      connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${req.query.queryCond.split('_')[1]}, ${element})`,(err, result) => {
+        if(err) console.log('fail to insert:', err)
       })    
     })
-  })
+  }
+  
   res.send('success')
+  
 })
 
 app.get('/edit-notify', (req, res) => {
-  console.log('editing')
-  res.send('success') 
+  console.log(`editing:${req.query.user_NotifyId}`)
+  connection.query(`SELECT user_MedId FROM Notify_Med WHERE user_NotifyId=${req.query.user_NotifyId}`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    //console.log(result)
+    res.send(result)
+  }) 
 })
 
 app.get('/delete-notify', (req, res) => {
@@ -156,7 +184,111 @@ app.get('/delete-notify', (req, res) => {
 
 const client = new line.Client(lineConfig)
 
+function run() {
+  //var push_msg = []
+  var now = new Date()
   
+  connection.query(`INSERT INTO user_Notify_temp SELECT * FROM user_Notify WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
+    if(err) console.log('fail to select:', err)
+  })
+
+  connection.query(`SELECT * FROM user_Notify WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'
+                    UNION SELECT * FROM user_Notify_temp WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
+    if(err) console.log('fail to select:', err)
+    console.log(result)
+    // console.log(result.length)
+
+    if (result.length != 0) {
+      for (var i = 0; i < result.length; i++) {
+        console.log('i =', i, 'userId =', result[i]['userId'])
+        
+        connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 10 MINUTE) WHERE user_NotifyId = ${ result[i]['user_NotifyId']}`, (err, result) => {
+          if(err) console.log('fail to UPDATE:', err)
+        })
+
+        var message = {
+          "type": "template",
+          "altText": "this is a carousel template",
+          "template": {
+            "type": "carousel",
+            "columns": [
+              {
+                "title": "您服用藥物了嗎？",
+                "text": "若服用完藥物，點選「吃了」，若還沒服用，可以點選「還沒吃」，我們將10分鐘後提醒您。",
+                "actions": [
+                  {
+                    "type": "message",
+                    "label": "吃了",
+                    "text": "吃了"
+                  },
+                  {
+                    "type": "message",
+                    "label": "還沒吃",
+                    "text": "還沒吃"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+
+        var now = new Date()
+        var drug = {
+          type : 'text',
+          text : `現在是${now.getHours()}:${now.getMinutes()}，記得藥服用以下藥物：`
+          
+        }
+
+        connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+          if(err) console.log('fail to select:', err)
+        })
+
+        var carousel_msg = {
+          "type": "template",
+          "altText": "this is an image carousel template",
+          "template": {
+            "type": "image_carousel",
+            "columns": [
+            ]
+          }
+        }
+
+
+        connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND Notify_Med.user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+          if(err) console.log('fail to UPDATE:', err)
+          result.forEach(element => {            
+            carousel_msg.template.columns.push({
+              "imageUrl": element.medPicture,
+              "action": {
+                "type": "message",
+                "label": `${element.medName}，${element.onceAmount}顆`,
+                "text": `${element.medName}，${element.onceAmount}顆`
+              }
+            })  
+          })
+
+        })
+
+        var r = result[i]['userId']
+
+
+        
+        client.pushMessage(r, drug)
+        setTimeout(function(){client.pushMessage(r, carousel_msg);}, 1000)
+        setTimeout(function(){client.pushMessage(r, message);}, 2000)
+
+        //client.pushMessage(result[i]['userId'], carousel_msg)
+        //client.pushMessage(result[i]['userId'], drug)
+        //client.pushMessage(result[i]['userId'], message)
+      }
+    }
+  })
+}
+
+run()
+setInterval(run, 60000)
+
+
 function handleEvent(event) {
 
   if(event.type == 'follow'){
@@ -170,6 +302,28 @@ function handleEvent(event) {
     .catch((err) => {
       console.log('err')
     })
+    
+    let greeting = {
+      "type": "template",
+      "altText": "this is a buttons template",
+      "template": {
+        "type": "buttons",
+        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:8217/img/drugbox_template.jpg",
+        "imageAspectRatio": "rectangle",
+        "imageSize": "cover",
+        "title": "建立我的藥盒",
+        "text": "請您先提供目前服用的藥物有哪些吧！",
+        "actions": [
+          {
+            "type": "uri",
+            "label": "新增藥物",
+            "uri" : "https://liff.line.me/1655949102-WX1rbAJw"
+          }
+        ]
+      }
+    }
+
+    client.replyMessage(event.replyToken, greeting)    
   }
 
   if(event.type == 'unfollow'){
@@ -178,7 +332,17 @@ function handleEvent(event) {
     })
   }
 
+  if (event.type == 'message') {
+    if (event.message.text == '吃了') {
+      console.log('吃藥了')
+      var now = new Date()
+      connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${now.getHours()}:${now.getMinutes()}:00'
+                        AND userId = '${event.source.userId}'`, (err, result) => {
+        if(err) console.log('fail to delete:', err)
+      })
+    }
 
+  }
 
 
   console.log(event)
@@ -188,10 +352,10 @@ function handleEvent(event) {
 
   if (event.message.id == '100001') return 200 // to deal with verify dummy data
 
-  return client.replyMessage(event.replyToken, { 
-    type: 'text',
-    text: event.message.text
-  })
+  // return client.replyMessage(event.replyToken, { 
+  //   type: 'text',
+  //   text: event.message.text
+  // })
 }
 
 

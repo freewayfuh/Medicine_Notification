@@ -35,15 +35,11 @@
                                     <div class="number">
                                       <div class="three">
                                         <div class="one">${value.totalAmount}</div>
-                                        <div class="two">藥物總量</div>
+                                        <div class="two">剩餘藥物</div>
                                       </div>
                                       <div class="three">
                                         <div class="one">${value.onceAmount}</div>
                                         <div class="two">每次劑量</div>
-                                      </div>
-                                      <div class="three">
-                                        <div class="one">2</div>
-                                        <div class="two">剩餘藥物</div>
                                       </div>
                                     </div>
                                   </div>
@@ -71,17 +67,12 @@
 
           }else{
             $('body').empty()
-            $('body').append(`<div class="wrapper row mx-auto p-5">
-                                <div>
-                                  <p class="title">建立我的藥盒</p>
-                                  <p>The problem with Realtimevirus scanners is that they're 
-                                    inherently heavy on the CPU, 
-                                    as they have to hash and comparebr 
-                                  </p>
-                                  <p class="row justify-content-center mt-5"><img class="col-sm-4" id="durgbox_img" src="img/drugbox.png" alt=""></p>
-                                  <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>
-                                </div>
-                              </div>`)
+            $('body').append(`<div class="add_med">
+                                <div><img src="img/MED.png"></div>
+                                <div>建立我的藥盒</div>
+                                <div>新增目前服用的藥物至線上藥盒</div>
+                              </div>
+                              <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
           }
         }
       })     
@@ -101,11 +92,11 @@
                             <div>藥物照片</div>
                           </div>
                           <div id ="upload-wrap" class="pic1">
-                            <div><img src="img/graph.png"></div>
+	                          <div><img src="img/graph.png"></div>
                             <div>上傳照片</div>
                             <div>(每種藥物僅可上傳一種照片)</div>
                             <div><button @click="reload"></button></div>
-                            <label class="upload"><input id="pic" type="file" @change="showpic" accept="image/*"></label>		
+                            <label class="upload"><input id="pic" type="file" @change="showpic" accept="image/*"></label>
                           </div>
                           <div class="total">
                             <div><img src="img/medicine.png"></div>
@@ -121,11 +112,12 @@
                           <div class="each1"><input id="each" type="number" placeholder="1" value="1" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
                         </div>
                         <div class="blank1"></div>
+                        <input id="picURL" type="text">
                         <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
-                        <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>
-                        <input id="picURL" type="text" value="">                        
+                        <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>                        
                         <input id="med_id" type="hidden" value="">`)
-      testupload()
+
+      
 
     }
 
@@ -140,10 +132,11 @@
 
 
           $('body').on('click', '#add', function(){        
-            Load_pillDetail()     
+            Load_pillDetail()
+            testupload()     
           })
 
-          $('body').on('click', '#create', function(){            
+          $('body').on('click', '#create', function(){
             $.ajax({
               url: 'add-med',
               data: {
@@ -169,13 +162,26 @@
               },
               success: function (data){
                 Load_pillDetail()
+                
                 $('#create').val('update')                
                 $.each(data, function (key, value){   
                   $('#med_name').val(value.medName)
+                  //$('picURL').val(value.medPicture)
                   $('#total').val(value.totalAmount)
                   $('#each').val(value.onceAmount)
                   $('#med_id').val(value.user_MedId)
-                })       
+                  if(value.medPicture){
+                    for(let i=0;i<3;i++){
+                      $('.pic1 div:nth-child(1)').remove()
+                    }
+                    $('.pic1').toggleClass('pic2', true)
+                    $('.pic2').toggleClass('pic1', false)
+                    $(".pic2").prepend("<div style=\"background-image:url("+ value.medPicture +")\"></div>");
+                    
+                  }
+                  testupload()
+                })
+                       
               }
             })                
           })
@@ -192,7 +198,14 @@
               }
             })                
           })          
-        
+
+          $('body').on('click', '#cancel', function(){
+            liff.closeWindow()       
+          })   
+
+
+          
+
         })        
       })
       .catch((err) => {

@@ -21,6 +21,9 @@ flex-direction:column;
 justify-content:flex-end;
 align-items:center;  
 }
+.pic1 div:nth-child(4){
+display:none;    
+}
 .pic1 div:nth-child(1) img{
 width:11.2vw;
 height:8vw;
@@ -35,9 +38,6 @@ margin-bottom:1vw;
 font-size:2vw;
 margin-bottom:1.25vw;
 color:#747474;  
-}
-.pic1 div:nth-child(4){
-display:none;    
 }
 .pic2 div:nth-child(2){
 position:absolute;

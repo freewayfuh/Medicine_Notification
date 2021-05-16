@@ -39,19 +39,37 @@ pre {
     white-space: normal;
 }
 
-button {
-    width: 72vw;
+#backbtn, #submitbtn, #cancelbtn, #nextbtn {
+    width: 45vw;
+    max-width: 220px;
+    color: #FFFFFF !important;
 }
 
 #backbtn, #submitbtn {
-    width: 35vw;
-    max-width: 220px;
     display: none;
 }
 
-#submitbtn {
+#cancelbtn, #backbtn{
+    left: 3%;
+    background-color: #A4A4A4;
+}
+
+#cancelbtn:hover, #backbtn:hover{
+    background-color: #7D7D7D;
+}
+
+#nextbtn, #submitbtn {
     float: right;
-    left: 53%;
+    left: 51%;
+    background-color: #27AE60;
+}
+
+#nextbtn:hover, #submitbtn:hover {
+    background-color: #219357;
+}
+
+.timeCheck, .pillChosen{
+    display: none;
 }
 
 

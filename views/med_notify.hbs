@@ -24,7 +24,7 @@
                             <div id="medNotify_div">
                             </div>   
                             <div class="blank"></div>
-                            <button class="btn btn-dark mx-auto" type="button" id="add">新增藥物</button>
+                            <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
                             <p class="btnHeight"></p> 
                           </div>
                         </div>`)
@@ -40,7 +40,7 @@
                                           </div>
                                           <div class="row justify-content-around mt-2">
                                             <input class="deletebtn col btn shadow" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
-                                            <input class="editbtn col btn shadow" type="button" value="  編輯">
+                                            <input class="editbtn col btn shadow" type="button" value="  編輯" edit_user_NotifyTime="${value.notifyTime}" edit_user_NotifyId="${value.user_NotifyId}">
                                           </div>`)
               $.ajax({
                 url: 'get-med-notify',
@@ -57,18 +57,12 @@
             })
           }else{
             $('body').empty()
-            $('body').append(`<div class="wrapper row mx-auto p-5">
-                                <div>
-                                  <p class="title">建立藥物提醒</p>
-                                  <p>The problem with Realtimevirus scanners is that they're 
-                                    inherently heavy on the CPU, 
-                                    as they have to hash and comparebr 
-                                  </p>
-                                  <p class="row justify-content-center mt-1"><img class="col-sm-4" id="landing_img" src="img/notify.png" alt=""></p>
-                                  <div class="blank"></div>
-                                  <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
-                                </div>
-                              </div>`)
+            $('body').append(`<div class="add_remind">
+                                <div><img src="img/remind.png"></div>
+                                <div>建立藥物提醒</div>
+                                <div>讓您不再困惑藥物種類及服用時間</div>
+                              </div>
+                              <button class="btn btn-dark mx-auto" id="add" type="button">新增提醒</button>`)
           }
         }
       })
@@ -95,20 +89,28 @@
                                   <p class="title">選擇藥物</p>
                                   <div class="pillCheck">
                                     <p id="warning_sentence">請至少選擇一種藥物</p>
-                                    <div class="row row-cols-3" id="medDisplay">
+                                    <div class="row row-cols-3" id="medDisplayCheck"></div>
+                                  </div>
+                                  <div class="pillChosen">
+                                    <div class="row row-cols-3" id="medDisplayChosen"></div>
                                   </div>
                                   <button class="btn mx-auto" type="button" id="cancelbtn">取消</button>
-                                  <button class="btn btn-dark mx-auto" type="button" id="nextbtn">下一步</button>
-                                  <button class="btn btn-dark mx-auto" type="button" id="backbtn">重新選擇藥物</button>
-                                  <button class="btn btn-dark mx-auto" type="button" id="submitbtn">完成</button>
+                                  <button class="btn mx-auto" type="button" id="nextbtn">下一步</button>
+                                  <button class="btn mx-auto" type="button" id="backbtn">重新選擇藥物</button>
+                                  <button class="btn mx-auto" type="button" id="submitbtn" value="insert">完成</button>
                                 </div>
                               </div>`)
           $.each(data, function (key, value){
-            $('#medDisplay').append(`<div class="med-imgs mr-1" id="med_${value.user_MedId}">
-                                      <label for="cbox_${value.user_MedId}"><img src="${value.medPicture}"></label> <input class="form-check-input" type="checkbox" value="${value.user_MedId}" id="cbox_${value.user_MedId}">
-                                      <div class="med-name shadow">${value.medName}</div>
-                                    </div>`)
+            $('#medDisplayCheck').append(`<div class="med-imgs mr-1 mt-3" id="medCheck_${value.user_MedId}">
+                                            <label for="cbox_${value.user_MedId}"><img src="${value.medPicture}"></label><input class="form-check-input" type="checkbox" value="${value.user_MedId}" id="cbox_${value.user_MedId}">
+                                            <div class="med-name shadow">${value.medName}</div>
+                                          </div>`)
+            $('#medDisplayChosen').append(`<div class="med-imgs mr-1 mt-3 medChosen" id="medChosen_${value.user_MedId}">
+                                              <img src="${value.medPicture}">
+                                              <div class="med-name shadow">${value.medName}</div>
+                                            </div>`)                                    
           })
+
         }
       })            
     }
@@ -128,21 +130,30 @@
           $('body').on('click', '#nextbtn', function(){
             $('input[type="checkbox"]').each(function(index) {
                 if(!this.checked){
-                  $('#med_'+this.value).remove()
-                }else{
-                  this.style.display = 'none'
-                }    
+                  $('#medChosen_'+this.value).css('display','none')
+                }  
             })
-            $('#warning_sentence').css('display','none')
+            $('.pillCheck').css('display','none')
+            $('.pillChosen').css('display','initial')
+            $('.timeCheck').css('display', 'initial')
             $('#nextbtn').css('display','none')
             $('#backbtn').css('display','initial')
             $('#submitbtn').css('display','initial')
-            $('.timeCheck').css('display', 'initial')
-            clock();
+            clock()
           })
 
           $('body').on('click', '#backbtn', function(){
-            Load_pickMed(profile.userId)
+            $('input[type="checkbox"]').each(function(index) {
+                if(!this.checked){
+                  $('#medChosen_'+this.value).css('display','initial')
+                }  
+            })            
+            $('.pillCheck').css('display','initial')
+            $('.pillChosen').css('display','none')
+            $('.timeCheck').css('display', 'none')
+            $('#nextbtn').css('display','initial')
+            $('#backbtn').css('display','none')
+            $('#submitbtn').css('display','none')
           })
 
 
@@ -157,10 +168,11 @@
                 userId: profile.userId,
                 hour: $('#hour').val(),
                 min: $('#min').val(),
+                queryCond: $('#submitbtn').val(),
                 user_MedId: user_MedId
               },
               success: function (data){
-                $('body').empty()                
+                Load_medNotify(profile.userId)               
               }
             })
           })                 
@@ -176,18 +188,40 @@
           })
 
           $('body').on('click', '.editbtn', function(){
-            $.ajax({
-              url: 'edit-notify',
-              data: {},
-              success: function (data){
-                //$('body').empty()
-                Load_pickMed(profile.userId)                
-                $('#warning_sentence').css('display','none')
-                //$('.timeCheck').css('display', 'initial')
-
-
+            let user_NotifyTime = $(this).attr('edit_user_NotifyTime')
+            let user_NotifyId = $(this).attr('edit_user_NotifyId')            
+            Load_pickMed(profile.userId)
+            let checkExist = setInterval(function() {
+              if ($('#medDisplayCheck').length) {
+                  clearInterval(checkExist)
+                  $.ajax({
+                    url: 'edit-notify',
+                    data: {user_NotifyId: user_NotifyId},
+                    success: function (data){
+                      $('.medChosen').css('display','none')
+                      $.each(data, function (key, value){
+                        $('#cbox_'+value.user_MedId).prop( "checked", true )
+                        $('#medChosen_'+value.user_MedId).css('display','initial')
+                      })
+                    }
+                  })                  
+                  $('.timeCheck').css('display', 'initial')
+                  $('.pillCheck').css('display','none')
+                  $('.pillChosen').css('display','initial')
+                  $('#nextbtn').css('display','none')
+                  $('#backbtn').css('display','initial')
+                  $('#submitbtn').css('display','initial')
+                  $('#hour').val(user_NotifyTime.split(':')[0])
+                  $('#min').val(user_NotifyTime.split(':')[1])
+                  $('#submitbtn').val('update_'+user_NotifyId)
+                  clock()
               }
-            })
+            }, 10)
+
+          })
+
+          $('body').on('click', '#cancelbtn', function(){
+            liff.closeWindow()
           })   
 
         })      
