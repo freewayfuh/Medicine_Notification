@@ -36,7 +36,7 @@
           if(Object.keys(data).length != 0){
             $.each(data, function (key, value){
               $('#medNotify_div').append(`<p class="time">${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</p>
-                                          <div class="row row-cols-3 mx-auto px-1 med_div" id="med_div_${value.user_NotifyId}">
+                                          <div class="row mx-auto px-1 pb-1 med_div" id="med_div_${value.user_NotifyId}">
                                           </div>
                                           <div class="row justify-content-around mt-2">
                                             <input class="deletebtn col btn shadow" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
@@ -81,7 +81,7 @@
                                   <div class="timeCheck">
                                     <p class="title check">新增提醒時間</p>
                                       <div class="roll-time">
-                                        <input type="text" id="hour" name="hour" placeholder="9" value="">
+                                        <input type="text" id="hour" name="hour" placeholder="0" value="">
                                         :
                                         <input type="text" id="min" name="min" placeholder="00" value="">
                                     </div>  
