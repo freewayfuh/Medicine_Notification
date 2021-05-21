@@ -59,7 +59,7 @@
                 url: 'get-med-notify',
                 data: {user_NotifyId: value.user_NotifyId},
                 success: function(data){
-                  $.each(data.slice(0,3), function (key, value){
+                  $.each(data, function (key, value){
                     $('#med_div_'+value.user_NotifyId).append(`<div class="med-imgs col-sm-3 mt-2 pb-3 px-1">
                                                                 <img src="${value.medPicture}">
                                                                 <div class="med-name shadow">${value.medName}</div>
