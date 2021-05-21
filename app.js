@@ -39,12 +39,17 @@ app.set('view engine', 'hbs')
 app.get('/add_medicine', (req, res) => {
   res.render('add_medicine')
 })
+
+app.get('/med_notify', (req, res) => {
+  res.render('med_notify')
+})
+
 app.get('/contact', (req, res) => {
   res.render('contact')
 })
 
-app.get('/med_notify', (req, res) => {
-  res.render('med_notify')
+app.get('/contact_invite', (req, res) => {
+  res.render('contact_invite')
 })
 
 app.post('/webhook', line.middleware(lineConfig), (req, res) => {
@@ -182,6 +187,23 @@ app.get('/delete-notify', (req, res) => {
 })
 
 
+//Contact
+app.get('/check-isFriend', (req, res) => {
+  connection.query(`SELECT * FROM user_Info WHERE userId='${req.query.userId}'`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    if(result.length > 0){
+      res.send(true)
+    }else{
+      res.send(false)
+    }
+  })    
+})
+
+
+app.get('/create-inviteCode', (req, res) =>{
+  res.send('2516')
+})
+
 const client = new line.Client(lineConfig)
 
 function run() {
@@ -308,7 +330,7 @@ function handleEvent(event) {
       "altText": "this is a buttons template",
       "template": {
         "type": "buttons",
-        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:8217/img/drugbox_template.jpg",
+        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:7128/img/drugbox_template.jpg",
         "imageAspectRatio": "rectangle",
         "imageSize": "cover",
         "title": "建立我的藥盒",
