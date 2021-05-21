@@ -1,10 +1,9 @@
 body {
     margin: 0;
+    padding: 0%;
 }
 .wrapper {
     width: 100vw;
-    max-width: 550px;
-    padding: 5vw;
 }
 
 .title {
@@ -21,7 +20,7 @@ button{
     border-radius: 12px  !important;
     width:70vw;
     max-width:440px;
-    -webkit-transform:translateZ(0);
+    transform:translateZ(0);
     
 }
 
@@ -32,13 +31,14 @@ button{
     bottom: 0;
     height: 7em;
     width: 100vw;
-    background-color:white;  
+    background-color:white;
 }
 
 
 .btnHeight {
     height: 10em;
 }
+
 
 #landing_img {
     width: 10vw !important; 

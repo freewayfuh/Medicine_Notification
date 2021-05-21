@@ -20,7 +20,7 @@
     function Load_medNotify(userId){
       $('body').empty()
       $('body').append(`<div class="wrapper row mx-auto">
-                          <div>
+                          <div class="content mx-auto">
                             <div id="medNotify_div">
                             </div>   
                             <div class="blank"></div>
@@ -35,13 +35,26 @@
         success: function (data){
           if(Object.keys(data).length != 0){
             $.each(data, function (key, value){
-              $('#medNotify_div').append(`<p class="time">${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</p>
-                                          <div class="row row-cols-3 mx-auto px-1 med_div" id="med_div_${value.user_NotifyId}">
+              $('#medNotify_div').append(`<div class="time form-check form-switch">
+                                            <a>${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</a>
+                                            <input class="form-check-input" type="checkbox">
                                           </div>
-                                          <div class="row justify-content-around mt-2">
-                                            <input class="deletebtn col btn shadow" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
-                                            <input class="editbtn col btn shadow" type="button" value="  編輯" edit_user_NotifyTime="${value.notifyTime}" edit_user_NotifyId="${value.user_NotifyId}">
-                                          </div>`)
+                                          <div class="row mx-auto px-2 pb-3 med_div" id="med_div_${value.user_NotifyId}">
+                                          </div>
+                                          <div class="row mx-auto">
+                                            <input class="deletebtn col btn" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
+                                            <input class="editbtn col btn" type="button" value="  編輯" edit_user_NotifyTime="${value.notifyTime}" edit_user_NotifyId="${value.user_NotifyId}">
+                                          </div>
+
+                                          <div class="alert-bg"></div>
+                                          <div class="alert-msg"><img>
+                                            <p>您確定要刪除這筆通知嗎？</p>
+                                            <div class="row justify-content-around">
+                                              <input class="col-sm-4 btn" type="button" value="取消刪除" id="cancelDelbtn">
+                                              <input class="col-sm-4 btn" type="button" value="確認刪除" id="confirmDelbtn">
+                                            </div>
+                                          </div>
+                                          `)
               $.ajax({
                 url: 'get-med-notify',
                 data: {user_NotifyId: value.user_NotifyId},
@@ -77,29 +90,32 @@
         success: function (data){
           $('body').empty()
           $('body').append(`<div class="wrapper row mx-auto">
-                              <div>
-                                  <div class="timeCheck">
-                                    <p class="title check">新增提醒時間</p>
-                                      <div class="roll-time">
-                                        <input type="text" id="hour" name="hour" placeholder="9" value="">
-                                        :
-                                        <input type="text" id="min" name="min" placeholder="00" value="">
-                                    </div>  
-                                  </div>                                        
+                              <div class="content mx-auto">
+                                <div class="timeCheck">
+                                  <div class="mx-auto my-5">
+                                    <input type="text" id="hour" name="hour" placeholder="0" value="">
+                                    :
+                                    <input type="text" id="min" name="min" placeholder="00" value="">
+                                  </div>  
+                                </div>                          
+                                <div class="pillCheck">           
                                   <p class="title">選擇藥物</p>
-                                  <div class="pillCheck">
-                                    <p id="warning_sentence">請至少選擇一種藥物</p>
-                                    <div class="row row-cols-3" id="medDisplayCheck"></div>
-                                  </div>
-                                  <div class="pillChosen">
-                                    <div class="row row-cols-3" id="medDisplayChosen"></div>
-                                  </div>
-                                  <button class="btn mx-auto" type="button" id="cancelbtn">取消</button>
-                                  <button class="btn mx-auto" type="button" id="nextbtn">下一步</button>
-                                  <button class="btn mx-auto" type="button" id="backbtn">重新選擇藥物</button>
-                                  <button class="btn mx-auto" type="button" id="submitbtn" value="insert">完成</button>
+                                  <p id="warning_sentence">請選擇1~10種藥物</p>
+                                  <div class="row row-cols-3" id="medDisplayCheck"></div>
                                 </div>
-                              </div>`)
+                                <div class="pillChosen">
+                                  <div class="row row-cols-3" id="medDisplayChosen"></div>
+                                </div>
+
+                                <div class="blank"></div>
+                                <button class="btn mx-auto" type="button" id="cancelbtn">取消</button>
+                                <button class="btn mx-auto" type="button" id="nextbtn">下一步</button>
+                                <button class="btn mx-auto" type="button" id="backbtn">重新選擇藥物</button>
+                                <button class="btn mx-auto" type="button" id="submitbtn" value="insert">完成</button>
+                                <p class="btnHeight"></p> 
+                              </div>
+                            </div>
+                            `)
           $.each(data, function (key, value){
             $('#medDisplayCheck').append(`<div class="med-imgs mr-1 mt-3" id="medCheck_${value.user_MedId}">
                                             <label for="cbox_${value.user_MedId}"><img src="${value.medPicture}"></label><input class="form-check-input" type="checkbox" value="${value.user_MedId}" id="cbox_${value.user_MedId}">
@@ -134,7 +150,7 @@
                 }  
             })
             $('.pillCheck').css('display','none')
-            $('.pillChosen').css('display','initial')
+            $('.pillChosen').css('display','block')
             $('.timeCheck').css('display', 'initial')
             $('#nextbtn').css('display','none')
             $('#backbtn').css('display','initial')
@@ -176,15 +192,23 @@
               }
             })
           })                 
-        
-          $('body').on('click', '.deletebtn', function(){
+          $('body').on('click', '#confirmDelbtn', function(){
             $.ajax({
               url: 'delete-notify',
-              data: {user_NotifyId: $(this).attr('del_user_NotifyId')},
+              data: {user_NotifyId: $('.deletebtn').attr('del_user_NotifyId')},
               success: function (data){
                 Load_medNotify(profile.userId)
               }
             })
+          })
+          $('body').on('click', '.deletebtn', function(){
+            $('.alert-bg').css('display', 'block');
+            $('.alert-msg').css('display', 'block');
+          })
+
+          $('body').on('click', '#cancelDelbtn', function(){
+            $('.alert-bg').css('display', 'none');
+            $('.alert-msg').css('display', 'none');
           })
 
           $('body').on('click', '.editbtn', function(){
@@ -207,7 +231,7 @@
                   })                  
                   $('.timeCheck').css('display', 'initial')
                   $('.pillCheck').css('display','none')
-                  $('.pillChosen').css('display','initial')
+                  $('.pillChosen').css('display','block')
                   $('#nextbtn').css('display','none')
                   $('#backbtn').css('display','initial')
                   $('#submitbtn').css('display','initial')
