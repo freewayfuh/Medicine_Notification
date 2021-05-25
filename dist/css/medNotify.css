@@ -59,20 +59,26 @@ input[type="button"] {
 }
 
 .deletebtn {
-    background-image: url("../img/delete.png");
-    background-repeat: no-repeat;
-    
+    background-image: url("../img/delete_origin.png");
+    background-size: 15px 15px;
+    background-repeat: no-repeat; 
     background-position: 23% 45%;
     border-radius: 0 0 0 20px!important;
     border-right: 1px solid #C4C4C4!important;
 }
 
-.deletebtn.btn:hover {
+.deletebtn.btn:hover {    
+    background-image: url("../img/delete_color.png");
+    background-size: 15px 15px;
+    background-repeat: no-repeat; 
+    background-position: 23% 45%;
+    border-radius: 0 0 0 20px!important;
      color: #FD614B;
 }
 
 .editbtn {
-    background-image: url("../img/edit.png");
+    background-image: url("../img/edit_origin.png");
+    background-size: 15px 15px;
     background-repeat: no-repeat;
     background-position: 23% 45%;
     border-radius: 0 0 20px 0!important;
@@ -80,6 +86,11 @@ input[type="button"] {
 }
 
 .editbtn.btn:hover {
+    background-image: url("../img/edit_color.png");
+    background-size: 15px 15px;
+    background-repeat: no-repeat;
+    background-position: 23% 45%;
+    border-radius: 0 0 20px 0!important;
     color: #296EA7;
 }
 
@@ -107,6 +118,10 @@ input[type="button"] {
     width: 90vw;
     text-align: center;
     z-index: 11;
+}
+
+.alert-msg img {
+    content: url('../img/warning.png');
 }
 
 .alert-msg input {
