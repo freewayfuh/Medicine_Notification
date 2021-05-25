@@ -302,7 +302,7 @@ function handleEvent(event) {
       "altText": "this is a buttons template",
       "template": {
         "type": "buttons",
-        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:7128/img/drugbox_template.jpg",
+        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:1516/img/drugbox_template.jpg",
         "imageAspectRatio": "rectangle",
         "imageSize": "cover",
         "title": "建立我的藥盒",

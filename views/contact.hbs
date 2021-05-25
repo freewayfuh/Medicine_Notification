@@ -12,4 +12,98 @@
 
   </head>
   <body>
+    <button id="btnShare_beSupervisor" style="display: none;">監護人</button>
+    <button id="btnShare_beSupervisee" style="display: none;">被監護人</button>
+    <h1 id="liff-uri"></h1>
   </body>
+  <script>
+    liff.init({
+      liffId:'1655949102-b0jGAZ6r'
+    })
+    .then(() => {
+      liff.getProfile()
+      .then(profile =>{
+        $(document).ready(function(){
+          $('#liff-uri').html(liff.permanentLink.createUrl())
+          $('body').on('click', '#btnShare_beSupervisor', function(){
+            $.ajax({
+              url: '/create-inviteCode',
+              data: {
+                supervise_role: 'supervisee',
+                userId: profile.userId               
+              },
+              success: function (data){
+                liff.permanentLink.setExtraQueryParam(`user_tracking_id=${profile.userId}`)
+                if (liff.isApiAvailable('shareTargetPicker')) {
+                  liff.shareTargetPicker([
+                    {
+                      "type": "template",
+                      "altText": "this is a buttons template",
+                      "template": {
+                        "type": "buttons",
+                        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:7128/img/contact_template.png",
+                        "title": "乖孫美美",
+                        "text": `邀請你成為我的吃藥監護人\n邀請碼:${data}`,
+                        "actions": [
+                          {
+                            "type": "uri",
+                            "label": "輸入邀請碼",
+                            "uri": liff.permanentLink.createUrl()
+                            //"uri": "https://liff.line.me/1655949102-Bp9qg6ke"
+                          }
+                        ]
+                      }
+                    }
+                  ])
+                                
+                  .then(
+                    console.log('share target picker')
+                  ).catch(function(res) {
+                    alert("Failed to launch ShareTargetPicker")
+                  })
+                
+                }
+              }
+            })            
+          })          
+        
+          $('body').on('click', '#btnShare_beSupervisee', function(){
+            if (liff.isApiAvailable('shareTargetPicker')) {
+              liff.shareTargetPicker([
+                {
+                  "type": "template",
+                  "altText": "this is a buttons template",
+                  "template": {
+                    "type": "buttons",
+                    "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:7128/img/contact_template.png",
+                    "title": "乖孫美美",
+                    "text": "邀請你成為我的吃藥被監護人",
+                    "actions": [
+                      {
+                        "type": "uri",
+                        "label": "輸入邀請碼",
+                        "uri": "https://liff.line.me/1655949102-Bp9qg6ke"
+                      }
+                    ]
+                  }
+                }
+              ])              
+              .then(
+                alert("ShareTargetPicker was launched")
+              ).catch(function(res) {
+                alert("Failed to launch ShareTargetPicker")
+              })
+             
+            }
+          })          
+        })      
+        
+      })
+      .catch((err) => {
+        console.log('error:', err)
+      })
+    })
+    .catch(error => {
+      //error callback   
+    })         
+  </script>
