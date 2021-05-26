@@ -187,6 +187,11 @@ app.get('/delete-notify', (req, res) => {
 })
 
 app.get('/switch-notify', (req, res) =>{
+  if(req.query.switch_status != 'ckecked'){
+    connection.query(`DELETE FROM user_Notify_temp WHERE user_NotifyId=${req.query.user_NotifyId}`,(err, result) => {
+      if(err) console.log('fail to delete:', err)
+    })    
+  }
   connection.query(`UPDATE user_Notify SET switch='${req.query.switch_status}' WHERE user_NotifyId=${req.query.user_NotifyId}`, (err, result) => {
     if(err) console.log('fail to update:', err)
     res.send('switch success!!')
