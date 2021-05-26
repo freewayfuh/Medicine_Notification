@@ -19,61 +19,64 @@
   <body>
   </body>
   <script>
+    function Load_landingPage(medNum){
+      if(medNum == 0){
+        $('body').empty()
+        $('body').append(`<div class="add_med">
+                            <div><img src="img/MED.png"></div>
+                            <div>建立我的藥盒</div>
+                            <div>新增目前服用的藥物至線上藥盒</div>
+                          </div>
+                          <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
+      }
+    }
+
     function Load_pillBox(userId){
+      $('body').empty()
+      $('body').append(`<div id="med_div"></div>
+                        <div class="blank"></div>
+                        <div class="blank1"></div>
+                        <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
+      
       $.ajax({
         url: 'load-pillBoxPage',
         data: {userId: userId},
         success: function (data){
-          $('body').empty()
-          if(Object.keys(data).length != 0){ 
-            $.each(data, function (key, value){
-              $('body').append(`<div class="item" id="${value.user_MedId}">
-                                  <div class="med">
-                                    <div class="image" style="background-image:url(${value.medPicture})"></div>
-                                    <div class="info"></div>
-                                    <div class="name">${value.medName}</div>
-                                    <div class="number">
-                                      <div class="three">
-                                        <div class="one">${value.totalAmount}</div>
-                                        <div class="two">剩餘藥物</div>
-                                      </div>
-                                      <div class="three">
-                                        <div class="one">${value.onceAmount}</div>
-                                        <div class="two">每次劑量</div>
+          $.each(data, function (key, value){
+            $('#med_div').append(`<div class="item" id="item_${value.user_MedId}">
+                                    <div class="med">
+                                      <div class="image" style="background-image:url(${value.medPicture})"></div>
+                                      <div class="info"></div>
+                                      <div class="name">${value.medName}</div>
+                                      <div class="number">
+                                        <div class="three">
+                                          <div class="one">${value.totalAmount}</div>
+                                          <div class="two">剩餘藥物</div>
+                                        </div>
+                                        <div class="three">
+                                          <div class="one">${value.onceAmount}</div>
+                                          <div class="two">每次劑量</div>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                  <div class="ope">
-                                      <button id="delete" type="button" value="${value.user_MedId}">
-                                        <div class="delete">
-                                          <div><img src="img/delete.png"></div>
-                                          <div>刪除</div>
-                                        </div>
-                                      </button>
-                                      <button id="edit" type="button" value="${value.user_MedId}">
-                                        <div class="edit">
-                                          <div><img src="img/edit.png"></div>
-                                          <div>編輯</div>
-                                        </div>
-                                      </button>
-                                  </div>
-                                </div>`)
-                                
-            })
-            $('body').append(`<div class="blank"></div>
-                              <div class="blank1"></div>
-                              <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
-
-
-          }else{
-            $('body').empty()
-            $('body').append(`<div class="add_med">
-                                <div><img src="img/MED.png"></div>
-                                <div>建立我的藥盒</div>
-                                <div>新增目前服用的藥物至線上藥盒</div>
-                              </div>
-                              <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
-          }
+                                    <div class="ope">
+                                        <button id="delete" type="button" value="${value.user_MedId}">
+                                          <div class="delete">
+                                            <div><img src="img/delete.png"></div>
+                                            <div>刪除</div>
+                                          </div>
+                                        </button>
+                                        <button id="edit" type="button" value="${value.user_MedId}">
+                                          <div class="edit">
+                                            <div><img src="img/edit.png"></div>
+                                            <div>編輯</div>
+                                          </div>
+                                        </button>
+                                    </div>
+                                  </div>`)
+                              
+          })  
+          Load_landingPage(Object.keys(data).length)
         }
       })     
     }
@@ -166,7 +169,6 @@
                 $('#create').val('update')                
                 $.each(data, function (key, value){   
                   $('#med_name').val(value.medName)
-                  //$('picURL').val(value.medPicture)
                   $('#total').val(value.totalAmount)
                   $('#each').val(value.onceAmount)
                   $('#med_id').val(value.user_MedId)
@@ -188,13 +190,15 @@
 
 
           $('body').on('click', '#delete', function(){
+            let user_MedId = $(this).attr('value') 
             $.ajax({
               url: '/delete-med',
               data: {
-                user_MedId: $(this).attr('value')               
+                user_MedId: user_MedId             
               },
               success: function (data){
-                Load_pillBox(profile.userId)
+                $('#item_' + user_MedId).remove()
+                Load_landingPage($('#med_div').children().length)
               }
             })                
           })          

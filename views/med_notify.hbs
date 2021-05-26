@@ -17,6 +17,17 @@
   <body>
   </body>
   <script>
+    function Load_landingPage(notifyNum){
+      if(notifyNum == 0){
+        $('body').empty()
+        $('body').append(`<div class="add_remind">
+                            <div><img src="img/remind.png"></div>
+                            <div>建立藥物提醒</div>
+                            <div>讓您不再困惑藥物種類及服用時間</div>
+                          </div>
+                          <button class="btn btn-dark mx-auto" id="add" type="button">新增提醒</button>`)        
+      }
+    }
     function Load_medNotify(userId){
       $('body').empty()
       $('body').append(`<div class="wrapper row mx-auto">
@@ -25,7 +36,7 @@
                             </div>   
                             <div class="blank"></div>
                             <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
-                            <p class="btnHeight"></p> 
+                            <p class="btnHeight"></p>
                           </div>
                         </div>`)
 
@@ -33,40 +44,34 @@
         url: 'get-notify',
         data: {userId: userId},
         success: function (data){
-          if(Object.keys(data).length != 0){
-            $.each(data, function (key, value){
-              $('#medNotify_div').append(`<div class="time form-check form-switch">
+          $.each(data, function (key, value){
+            $('#medNotify_div').append(`<div id="med_notify_div_${value.user_NotifyId}">
+                                          <div class="time form-check form-switch">
                                             <a>${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</a>
-                                            <input class="form-check-input switchbtn" type="checkbox" value="${value.user_NotifyId}">
+                                            <input class="form-check-input switchbtn" type="checkbox" value="${value.user_NotifyId}" ${value.switch}>
                                           </div>
                                           <div class="row mx-auto px-2 pb-3 med_div" id="med_div_${value.user_NotifyId}">
                                           </div>
                                           <div class="row mx-auto">
                                             <input class="deletebtn col btn" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
                                             <input class="editbtn col btn" type="button" value="  編輯" edit_user_NotifyTime="${value.notifyTime}" edit_user_NotifyId="${value.user_NotifyId}">
-                                          </div>`)
-              $.ajax({
-                url: 'get-med-notify',
-                data: {user_NotifyId: value.user_NotifyId},
-                success: function(data){
-                  $.each(data, function (key, value){
-                    $('#med_div_'+value.user_NotifyId).append(`<div class="med-imgs col-sm-3 mt-2 pb-3 px-1">
-                                                                <img src="${value.medPicture}">
-                                                                <div class="med-name shadow">${value.medName}</div>
-                                                              </div>`)
-                  })
-                }
-              })
+                                          </div>
+                                        </div>`)
+
+            $.ajax({
+              url: 'get-med-notify',
+              data: {user_NotifyId: value.user_NotifyId},
+              success: function(data){
+                $.each(data, function (key, value){
+                  $('#med_div_'+value.user_NotifyId).append(`<div class="med-imgs col-sm-3 mt-2 pb-3 px-1">
+                                                              <img src="${value.medPicture}">
+                                                              <div class="med-name shadow">${value.medName}</div>
+                                                            </div>`)
+                })
+              }
             })
-          }else{
-            $('body').empty()
-            $('body').append(`<div class="add_remind">
-                                <div><img src="img/remind.png"></div>
-                                <div>建立藥物提醒</div>
-                                <div>讓您不再困惑藥物種類及服用時間</div>
-                              </div>
-                              <button class="btn btn-dark mx-auto" id="add" type="button">新增提醒</button>`)
-          }
+          })
+          Load_landingPage(Object.keys(data).length)
         }
       })
       
@@ -184,13 +189,18 @@
           })
                            
           $('body').on('click', '#confirmDelbtn', function(){
+            let user_NotifyId = $(this).attr('del_user_NotifyId')
             $.ajax({
               url: 'delete-notify',
-              data: {user_NotifyId: $(this).attr('del_user_NotifyId')},
+              data: {user_NotifyId: user_NotifyId},
               success: function (data){
-                Load_medNotify(profile.userId)
+                $('.alert-bg').remove()
+                $('.alert-msg').remove()                
+                $('#med_notify_div_' + user_NotifyId).remove()
+                Load_landingPage($('#medNotify_div').children().length)
               }
             })
+            $('body').css('overflow', 'scroll')
           })
 
           $('body').on('click', '.deletebtn', function(){
@@ -203,11 +213,13 @@
                                             <input class="col-sm-4 btn" type="button" value="確認刪除" id="confirmDelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
                                           </div>
                                         </div>`)
+            $('body').css('overflow', 'hidden')
           })
 
           $('body').on('click', '#cancelDelbtn', function(){
             $('.alert-bg').remove()
             $('.alert-msg').remove()
+            $('body').css('overflow', 'scroll')
           })
 
           $('body').on('click', '.editbtn', function(){
@@ -248,9 +260,14 @@
           })
 
           $('body').on('click', '.switchbtn', function(){                    
+            let switch_status
+            if(this.checked) switch_status = 'checked'
+            else switch_status = ''
+            
             $.ajax({
               url: 'switch-notify',
-              data: {user_NotifyId: $(this).val()},
+              data: {user_NotifyId: $(this).val(),
+                    switch_status: switch_status},
               success: function (data){
                 console.log('switch success!!')
               }
