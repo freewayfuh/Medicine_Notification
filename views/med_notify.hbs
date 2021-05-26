@@ -211,6 +211,9 @@
           $('body').on('click', '#cancelDelbtn', function(){
             $('.alert-bg').remove()
             $('.alert-msg').remove()
+
+            $('body').css("overflow","scroll")
+
           })
 
           $('body').on('click', '.editbtn', function(){
