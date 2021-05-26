@@ -191,6 +191,7 @@
                 Load_medNotify(profile.userId)
               }
             })
+            $('.wrapper ').css("overflow-y","scroll")
           })
 
           $('body').on('click', '.deletebtn', function(){
@@ -203,6 +204,8 @@
                                             <input class="col-sm-4 btn" type="button" value="確認刪除" id="confirmDelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
                                           </div>
                                         </div>`)
+            
+            $('.wrapper ').css("overflow-y","hidden")
           })
 
           $('body').on('click', '#cancelDelbtn', function(){
