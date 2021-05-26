@@ -191,7 +191,7 @@
                 Load_medNotify(profile.userId)
               }
             })
-            $('.wrapper ').css("overflow-y","scroll")
+            $('body').css("overflow","scroll")
           })
 
           $('body').on('click', '.deletebtn', function(){
@@ -205,7 +205,7 @@
                                           </div>
                                         </div>`)
             
-            $('.wrapper ').css("overflow-y","hidden")
+            $('body').css("overflow","hidden")
           })
 
           $('body').on('click', '#cancelDelbtn', function(){
