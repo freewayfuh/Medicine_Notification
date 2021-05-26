@@ -137,7 +137,7 @@ app.get('/create-med-notify', (req, res) => {
   if(req.query.queryCond == 'insert'){  
     console.log('insert')
     let user_NotifyId
-    connection.query(`INSERT INTO user_Notify(notifyTime, userId) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}')`,(err, result) => {
+    connection.query(`INSERT INTO user_Notify(notifyTime, userId, switch) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}', 'on')`,(err, result) => {
       if(err) console.log('fail to select:', err)
     })
     connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
@@ -178,12 +178,17 @@ app.get('/edit-notify', (req, res) => {
   }) 
 })
 
-app.get('/delete-notify', (req, res) => {
-  console.log(req.query.user_NotifyId)
+app.get('/delete-notify', (req, res) => { 
   connection.query(`DELETE FROM user_Notify WHERE user_NotifyId=${req.query.user_NotifyId}`,(err, result) => {
     if(err) console.log('fail to delete:', err)
     res.send('delete success')
-  })  
+  })
+
+})
+
+app.get('/switch-notify', (req, res) =>{
+  console.log(req.query.user_NotifyId)
+  res.send('switch success!!')
 })
 
 
@@ -306,10 +311,10 @@ function run() {
     }
   })
 }
-
+/*
 run()
 setInterval(run, 60000)
-
+*/
 
 function handleEvent(event) {
 

@@ -95,7 +95,7 @@ input[type="button"] {
 }
 
 .alert-bg {
-    display: none;
+    display: block;
     background-color: rgba(0,0,0,0.7);
     position: fixed;
     padding: 5vw;
@@ -108,7 +108,7 @@ input[type="button"] {
 }
 
 .alert-msg {
-    display: none;
+    display: block;
     border-radius: 20px;
     background-color: #F0F0F0;
     position: fixed;
