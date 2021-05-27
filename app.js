@@ -101,7 +101,6 @@ app.get('/delete-med', (req, res) => {
     if(err) console.log('fail to delete:', err)
     connection.query(`DELETE FROM user_Notify WHERE user_NotifyId NOT IN(SELECT DISTINCT user_NotifyId FROM Notify_Med)`,(err, result) => {
       if(err) console.log('fail to delete:', err)
-      console.log('fuck')
     })    
     res.send('delete success')
   })  
