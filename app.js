@@ -99,6 +99,10 @@ app.get('/delete-med', (req, res) => {
   console.log(req.query.user_MedId)
   connection.query(`DELETE FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
     if(err) console.log('fail to delete:', err)
+    connection.query(`DELETE FROM user_Notify WHERE user_NotifyId NOT IN(SELECT DISTINCT user_NotifyId FROM Notify_Med)`,(err, result) => {
+      if(err) console.log('fail to delete:', err)
+      console.log('fuck')
+    })    
     res.send('delete success')
   })  
 })
@@ -106,7 +110,6 @@ app.get('/delete-med', (req, res) => {
 
 //Notify
 app.get('/get-notify', (req, res) => {
-  console.log(req.query.userId)
   connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}' ORDER BY notifyTime`,(err, result) => {
     if(err) console.log('fail to select:', err)
     //console.log(result)
