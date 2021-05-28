@@ -59,6 +59,10 @@ input[type="text"] {
     background-color: #27AE60;
 }
 
+/* #nextbtn-disabled {
+    
+} */
+
 #nextbtn:hover, #submitbtn:hover,#nextbtn:active, #submitbtn:active {
     background-color: #219357;
 }
@@ -76,7 +80,7 @@ input[type="text"] {
     background-color: #F0F0F0;
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
-    height: 100vh;
+    min-height: 50vh;
     width: 100vw;
     padding: 5vw;
     position: relative;

@@ -21,25 +21,33 @@ button{
     width:70vw;
     max-width:440px;
     transform:translateZ(0);
-    -webkit-transform:translateZ(0) ;
 }
 
+
+.footer {
+    position: fixed;
+    left: 0%;
+    bottom: 0;
+    right: 0%;
+    width: 100vw;
+}
 
 .blank {
     position: fixed;
     left: 0%;
     bottom: 0;
-    height: 5em;
+    right: 0%;
+    height: 7em;
     width: 100vw;
     background-color:white;
-    -webkit-transform:translateZ(0) ;
 }
 
 
 
 
+
 .btnHeight {
-    height: 50vw;   -webkit-transform:translateZ(0) ;
+    height: 7em;  
 }
 
 
