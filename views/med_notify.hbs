@@ -34,9 +34,11 @@
                           <div class="content mx-auto">
                             <div id="medNotify_div">
                             </div>   
-                            <div class="blank"></div>
-                            <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
-                            <p class="btnHeight"></p>
+                            <div class="footer">
+                              <div class="blank"></div>
+                              <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
+                              <p class="btnHeight"></p>
+                            </div>
                           </div>
                         </div>`)
 
@@ -102,12 +104,14 @@
                                   <div class="row row-cols-3" id="medDisplayChosen"></div>
                                 </div>
 
-                                <div class="blank"></div>
-                                <button class="btn mx-auto" type="button" id="cancelbtn">取消</button>
-                                <button class="btn mx-auto" type="button" id="nextbtn">下一步</button>
-                                <button class="btn mx-auto" type="button" id="backbtn">重新選擇藥物</button>
-                                <button class="btn mx-auto" type="button" id="submitbtn" value="insert">完成</button>
-                                <p class="btnHeight"></p> 
+                                <div class="footer">
+                                  <div class="blank"></div>
+                                  <button class="btn mx-auto" type="button" id="cancelbtn">取消</button>
+                                  <button class="btn mx-auto" type="button" id="nextbtn" >下一步</button>
+                                  <button class="btn mx-auto" type="button" id="backbtn">重新選擇藥物</button>
+                                  <button class="btn mx-auto" type="button" id="submitbtn" value="insert">完成</button>
+                                  <p class="btnHeight"></p> 
+                                </div>
                               </div>
                             </div>
                             `)
@@ -136,21 +140,28 @@
           Load_medNotify(profile.userId)          
           $('body').on('click', '#add', function(){  
             Load_pickMed(profile.userId)             
-          })                    
+          })                
+
 
           $('body').on('click', '#nextbtn', function(){
-            $('input[type="checkbox"]').each(function(index) {
-                if(!this.checked){
-                  $('#medChosen_'+this.value).css('display','none')
-                }  
-            })
-            $('.pillCheck').css('display','none')
-            $('.pillChosen').css('display','block')
-            $('.timeCheck').css('display', 'initial')
-            $('#nextbtn').css('display','none')
-            $('#backbtn').css('display','initial')
-            $('#submitbtn').css('display','initial')
-            clock()
+            if($('.form-check-input:checked').length == 0){
+              $('#warning_sentence').css('color','red');
+            }
+            else{
+              $('#warning_sentence').css('color','#FFFFFF');
+              $('input[type="checkbox"]').each(function(index) {
+                  if(!this.checked){
+                    $('#medChosen_'+this.value).css('display','none')
+                  }  
+              })
+              $('.pillCheck').css('display','none')
+              $('.pillChosen').css('display','block')
+              $('.timeCheck').css('display', 'initial')
+              $('#nextbtn').css('display','none')
+              $('#backbtn').css('display','initial')
+              $('#submitbtn').css('display','initial')
+              clock()
+            }
           })
 
           $('body').on('click', '#backbtn', function(){
@@ -213,12 +224,14 @@
                                             <input class="col-sm-4 btn" type="button" value="確認刪除" id="confirmDelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
                                           </div>
                                         </div>`)
+
             $('body').css('overflow', 'hidden')
           })
 
           $('body').on('click', '#cancelDelbtn', function(){
             $('.alert-bg').remove()
             $('.alert-msg').remove()
+
             $('body').css('overflow', 'scroll')
           })
 
