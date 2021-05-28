@@ -49,7 +49,7 @@ input[type="text"] {
     background-color: #A4A4A4;
 }
 
-#cancelbtn:hover, #backbtn:hover{
+#cancelbtn:hover, #backbtn:hover,#cancelbtn:active, #backbtn:active{
     background-color: #7D7D7D;
 }
 
@@ -59,7 +59,7 @@ input[type="text"] {
     background-color: #27AE60;
 }
 
-#nextbtn:hover, #submitbtn:hover {
+#nextbtn:hover, #submitbtn:hover,#nextbtn:active, #submitbtn:active {
     background-color: #219357;
 }
 
