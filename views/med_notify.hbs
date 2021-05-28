@@ -144,6 +144,12 @@
                   $('#medChosen_'+this.value).css('display','none')
                 }  
             })
+            if($('.form-check-input:checked').length == 0){
+              $('#warning_sentence').css('color','red');
+            }
+            else{
+              $('#warning_sentence').css('color','#FFFFFF');
+            }
             $('.pillCheck').css('display','none')
             $('.pillChosen').css('display','block')
             $('.timeCheck').css('display', 'initial')

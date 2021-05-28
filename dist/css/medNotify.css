@@ -67,7 +67,7 @@ input[type="button"] {
     border-right: 1px solid #C4C4C4!important;
 }
 
-.deletebtn.btn:hover {    
+.deletebtn.btn:hover, .deletebtn.btn:active {    
     background-image: url("../img/delete_color.png");
     background-size: 15px 15px;
     background-repeat: no-repeat; 
@@ -85,7 +85,7 @@ input[type="button"] {
 
 }
 
-.editbtn.btn:hover {
+.editbtn.btn:hover ,.editbtn.btn:active{
     background-image: url("../img/edit_color.png");
     background-size: 15px 15px;
     background-repeat: no-repeat;

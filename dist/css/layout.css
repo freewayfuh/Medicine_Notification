@@ -21,7 +21,7 @@ button{
     width:70vw;
     max-width:440px;
     transform:translateZ(0);
-    
+    -webkit-transform:translateZ(0) ;
 }
 
 
@@ -29,14 +29,17 @@ button{
     position: fixed;
     left: 0%;
     bottom: 0;
-    height: 7em;
+    height: 5em;
     width: 100vw;
     background-color:white;
+    -webkit-transform:translateZ(0) ;
 }
 
 
+
+
 .btnHeight {
-    height: 10em;
+    height: 50vw;   -webkit-transform:translateZ(0) ;
 }
 
 
