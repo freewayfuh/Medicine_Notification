@@ -231,7 +231,6 @@
           $('body').on('click', '#cancelDelbtn', function(){
             $('.alert-bg').remove()
             $('.alert-msg').remove()
-
             $('body').css('overflow', 'scroll')
           })
 
@@ -241,12 +240,12 @@
             Load_pickMed(profile.userId)
             let checkExist = setInterval(function() {
               if ($('#medDisplayCheck').length) {
+                  $('.medChosen').css('display','none')
                   clearInterval(checkExist)
                   $.ajax({
                     url: 'edit-notify',
                     data: {user_NotifyId: user_NotifyId},
                     success: function (data){
-                      $('.medChosen').css('display','none')
                       $.each(data, function (key, value){
                         $('#cbox_'+value.user_MedId).prop( "checked", true )
                         $('#medChosen_'+value.user_MedId).css('display','initial')

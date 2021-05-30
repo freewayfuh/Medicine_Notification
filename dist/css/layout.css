@@ -23,7 +23,7 @@ button{
     transform:translateZ(0);
 }
 
-
+/*
 .footer {
     position: fixed;
     left: 0%;
@@ -31,7 +31,7 @@ button{
     right: 0%;
     width: 100vw;
 }
-
+*/
 .blank {
     position: fixed;
     left: 0%;

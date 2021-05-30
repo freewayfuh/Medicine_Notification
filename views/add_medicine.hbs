@@ -9,14 +9,31 @@
     <script src="https://static.line-scdn.net/liff/edge/2.1/sdk.js"></script>
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="js/uploadPicture.js" type="text/javascript"></script>
+    <script src="js/navAnimate.js" type="text/javascript"></script>
     <link href="css/pillBox.css" rel="stylesheet">
     <link href="css/pageInit.css" rel="stylesheet">
     <link href="css/medDetail.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     
-    <title>我的藥盒</title>
+    <title>藥盒</title>
   </head>
   <body>
+    <nav style="display: none;">
+      <button><div class="mine">我的藥盒<div id="mine"></div></div></button>
+      <button><div class="contacter">被提醒人的藥盒<div id="contacter"></div></div></button>	
+    </nav>
+    <div id="blank_underNavbar" style="display: none;"></br></br></br></div>
+    <div id="supervisee"></div>
+    <div id="myPillbox"></div>
+    <div id="superviseePillbox"></div>
+    <div id="superviseePillboxs_list" style="display: none;"></div>
+    <div id="pillDetail"></div>
+    <div id="landingPage"></div>
+    <div id="footer" style="display: none;">
+      <div class="blank"></div>
+      <div class="blank1"></div>
+      <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>
+    </div>     
   </body>
   <script>
     function Load_landingPage(medNum){
@@ -31,19 +48,17 @@
       }
     }
 
-    function Load_pillBox(userId){
-      $('body').empty()
-      $('body').append(`<div id="med_div"></div>
-                        <div class="blank"></div>
-                        <div class="blank1"></div>
-                        <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
-      
+    function Load_pillBox(userId, pillBox){
+      $(`#${pillBox}`).empty()
+      $(`#${pillBox}`).css('display', 'initial')
+
       $.ajax({
         url: 'load-pillBoxPage',
         data: {userId: userId},
         success: function (data){
-          $.each(data, function (key, value){
-            $('#med_div').append(`<div class="item" id="item_${value.user_MedId}">
+          $('#footer').css('display', 'initial')
+          $.each(data.user_Med, function (key, value){
+            $(`#${pillBox}`).append(`<div class="item" id="item_${value.user_MedId}">
                                     <div class="med">
                                       <div class="image" style="background-image:url(${value.medPicture})"></div>
                                       <div class="info"></div>
@@ -76,52 +91,85 @@
                                   </div>`)
                               
           })  
-          Load_landingPage(Object.keys(data).length)
+
+          if(pillBox == 'myPillbox' && $('#superviseePillboxs_list').children().length == 0){              
+            $.each(data.supervise, function (key, value){
+              $('#superviseePillboxs_list').append(`<button type="button" class="supervisee_check" value="${value.userId}">${value.userName}</button></br></br>`)
+            })   
+            if(data.supervise.length != 0){
+              $('nav').css('display', 'flex')
+              $('#blank_underNavbar').css('display', 'initial')
+            }
+          }
+          Load_landingPage(Object.keys(data.user_Med).length) 
         }
       })     
     }
     
     function Load_pillDetail(){
-      $('body').empty()
+      $('#myPillbox').css('display','none')
+      $('#superviseePillbox').css('display','none')
+      $('#superviseePillboxs_list').css('display', 'none')
+      $('#footer').css('display', 'none')          
 
-      $('body').append(`<div class="add">
-                          <div class="med_name">
-                            <div><img src="img/medicine.png"></div>
-                            <div>藥物名稱</div>
-                          </div>
-                          <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
-                          <div class="pic">
-                            <div><img src="img/medicine.png"></div>
-                            <div>藥物照片</div>
-                          </div>
-                          <div id ="upload-wrap" class="pic1">
-	                          <div><img src="img/graph.png"></div>
-                            <div>上傳照片</div>
-                            <div>(每種藥物僅可上傳一種照片)</div>
-                            <div><button @click="reload"></button></div>
-                            <label class="upload"><input id="pic" type="file" @change="showpic" accept="image/*"></label>
-                          </div>
-                          <div class="total">
-                            <div><img src="img/medicine.png"></div>
-                            <div>藥物總量</div>
-                            <div>(單位:個)</div>
-                          </div>
-                          <div class="total1"><input id="total" type="number" placeholder="20" value="20" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
-                          <div class="each">
-                            <div><img src="img/medicine.png"></div>
-                            <div>每次服用劑量</div>
-                            <div>(單位:個)</div>
-                          </div>
-                          <div class="each1"><input id="each" type="number" placeholder="1" value="1" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
-                        </div>
-                        <div class="blank1"></div>
-                        <input id="picURL" type="text">
-                        <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
-                        <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>                        
-                        <input id="med_id" type="hidden" value="">`)
+      $('#pillDetail').append(`<div class="add">
+                                <div class="med_name">
+                                  <div><img src="img/medicine.png"></div>
+                                  <div>藥物名稱</div>
+                                </div>
+                                <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
+                                <div class="pic">
+                                  <div><img src="img/medicine.png"></div>
+                                  <div>藥物照片</div>
+                                </div>
+                                <div id ="upload-wrap" class="pic1">
+                                  <div><img src="img/graph.png"></div>
+                                  <div>上傳照片</div>
+                                  <div>(每種藥物僅可上傳一種照片)</div>
+                                  <div><button @click="reload"></button></div>
+                                  <label class="upload"><input id="pic" type="file" @change="showpic" accept="image/*"></label>
+                                </div>
+                                <div class="total">
+                                  <div><img src="img/medicine.png"></div>
+                                  <div>藥物總量</div>
+                                  <div>(單位:個)</div>
+                                </div>
+                                <div class="total1"><input id="total" type="number" placeholder="20" value="20" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
+                                <div class="each">
+                                  <div><img src="img/medicine.png"></div>
+                                  <div>每次服用劑量</div>
+                                  <div>(單位:個)</div>
+                                </div>
+                                <div class="each1"><input id="each" type="number" placeholder="1" value="1" oninput="if(value<=0)value=0;if(value.slice(0,1)==0)value=value*10/10;if(value.length>3)value=value.slice(0,3);"></div>
+                              </div>
+                              <div class="blank1"></div>
+                              <input id="picURL" type="text">
+                              <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
+                              <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>                        
+                              <input id="med_id" type="hidden" value="">`)
 
       
 
+    }
+
+    function Add_pillDetail(userId, pillBox){
+      $(this).css('disabled','true')
+      $.ajax({
+        url: 'add-med',
+        data: {
+          userId: userId,
+          medName: $('#med_name').val(),
+          totalAmount: $('#total').val(),
+          onceAmount: $('#each').val(),
+          queryCond: $('#create').val(),
+          user_MedId: $('#med_id').val(),
+          medPicture: $('#picURL').val()
+        },
+        success: function (data){
+          $('#pillDetail').empty()
+          Load_pillBox(userId, pillBox)          
+        }
+      })         
     }
 
     liff.init({
@@ -131,8 +179,27 @@
       liff.getProfile()
       .then(profile =>{
         $(document).ready(function(){
-          Load_pillBox(profile.userId)
+          Load_pillBox(profile.userId, 'myPillbox')
 
+          $('body').on('click', 'nav button:nth-child(1)', function(){            
+            Nav_mine_animate()
+            $('#myPillbox').css('display', 'initial')
+            $('#superviseePillbox').css('display', 'none')
+            $('#footer').css('display', 'initial')
+            $('#superviseePillboxs_list').css('display', 'none') 
+            $('#pillDetail').empty()
+            $('#supervisee').empty()
+          })
+          
+          $('body').on('click', 'nav button:nth-child(2)', function(){
+            Nav_contactor_animate()
+            $('#myPillbox').css('display','none')
+            $('#superviseePillbox').css('display', 'none')
+            $('#footer').css('display', 'none')
+            $('#superviseePillboxs_list').css('display', 'initial')
+            $('#pillDetail').empty()
+            $('#supervisee').empty()           
+          })
 
           $('body').on('click', '#add', function(){        
             Load_pillDetail()
@@ -140,21 +207,8 @@
           })
 
           $('body').on('click', '#create', function(){
-            $.ajax({
-              url: 'add-med',
-              data: {
-                userId: profile.userId,
-                medName: $('#med_name').val(),
-                totalAmount: $('#total').val(),
-                onceAmount: $('#each').val(),
-                queryCond: $('#create').val(),
-                user_MedId: $('#med_id').val(),
-                medPicture: $('#picURL').val()
-              },
-              success: function (data){
-                Load_pillBox(profile.userId)          
-              }
-            })         
+            if(!$('#supervisee').html()) Add_pillDetail(profile.userId, 'myPillbox')
+            else Add_pillDetail($('#supervisee').val(), 'superviseePillbox')
           })
 
           $('body').on('click', '#edit', function(){
@@ -188,7 +242,6 @@
             })                
           })
 
-
           $('body').on('click', '#delete', function(){
             let user_MedId = $(this).attr('value') 
             $.ajax({
@@ -198,7 +251,7 @@
               },
               success: function (data){
                 $('#item_' + user_MedId).remove()
-                Load_landingPage($('#med_div').children().length)
+                Load_landingPage($('#myPillbox').children().length)
               }
             })                
           })          
@@ -207,7 +260,12 @@
             liff.closeWindow()       
           })   
 
-
+          $('body').on('click', '.supervisee_check', function(){
+            $('#superviseePillboxs_list').css('display', 'none')
+            $('#supervisee').val($(this).val())
+            $('#supervisee').html($(this).html())
+            Load_pillBox($(this).val(), 'superviseePillbox')
+          })
           
 
         })        

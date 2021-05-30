@@ -61,10 +61,16 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
 //Pill Box
 app.get('/load-pillBoxPage', (req, res) => {
   console.log(req.query.userId)
+  data = {}
+  connection.query(`SELECT * FROM Supervise, user_Info WHERE supervisorId='${req.query.userId}' AND superviseeId=userId`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    data.supervise = result
+  })
+
   connection.query(`SELECT * FROM user_Med WHERE userId='${req.query.userId}'`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    //console.log(result)
-    res.send(result)
+    data.user_Med = result
+    res.send(data)
   })
 
 })
