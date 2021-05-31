@@ -7,6 +7,7 @@ const line_config = require('./config/line.js')
 const mysql = require('mysql')
 const db_config = require('./config/db.js')
 const { formidable } = require('formidable')
+const bodyParser = require('body-parser')
 
 const lineConfig = {
   channelAccessToken: line_config.accessToken,
@@ -30,6 +31,8 @@ connection.connect(err => {
 
 })
 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
+app.use(bodyParser.json({limit: '50mb', extended: true}))
 app.use(express.static(`${__dirname}/dist`))
 app.set('view engine', 'hbs')
 
@@ -76,18 +79,21 @@ app.get('/load-pillBoxPage', (req, res) => {
 })
 
 
-app.get('/add-med', (req, res) => {  
-  console.log('test')
-  if(req.query.queryCond == 'insert'){
-    connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.query.medName}', ${req.query.totalAmount}, ${req.query.onceAmount}, '${req.query.medPicture}', '${req.query.userId}')`,(err, result) => {
-      if(err) console.log('fail to insert:', err)
-    })
-  }else if(req.query.queryCond == 'update'){
-    connection.query(`UPDATE user_Med SET medName='${req.query.medName}', totalAmount=${req.query.totalAmount}, onceAmount=${req.query.onceAmount} WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
-      if(err) console.log('fail to update:', err)
-    })
-     
-  }
+app.post('/add-med', (req, res) => {
+  connection.query(`SELECT MAX(user_MedId) FROM user_Med`, (err, result) =>{
+    let picName = `${result + 1}.png`
+    fs.writeFile(`./dist/img/medPic/${picName}`, req.body.medPicture.split('base64,')[1])
+    
+    if(req.query.queryCond == 'insert'){
+      connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.body.medName}', ${req.body.totalAmount}, ${req.body.onceAmount}, 'img/medPic/${picName}', '${req.body.userId}')`,(err, result) => {
+        if(err) console.log('fail to insert:', err)
+      })
+    }else if(req.query.queryCond == 'update'){
+      connection.query(`UPDATE user_Med SET medName='${req.body.medName}', totalAmount=${req.body.totalAmount}, onceAmount=${req.body.onceAmount}, medPicture='img/medPic/${picName}' WHERE user_MedId=${req.body.user_MedId}`,(err, result) => {
+        if(err) console.log('fail to update:', err)
+      })     
+    }    
+  })
   res.send('success')
 })
 
