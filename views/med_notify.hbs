@@ -17,26 +17,28 @@
     <title>藥物提醒</title>
   </head>
   <body>
-    <nav>
-      <button><div class="mine">我的提醒<div id="mine"></div></div></button>
-      <button><div class="contacter">被提醒人的提醒<div id="contacter"></div></div></button>	
-    </nav>  
+    <nav >
+      <button><div class="mine">我的藥盒<div id="mine"></div></div></button>
+      <button><div class="contacter">被提醒人的藥盒<div id="contacter"></div></div></button>	
+    </nav>
+    <section id="landingpage"></section>
   </body>
   <script>
     function Load_landingPage(notifyNum){
       if(notifyNum == 0){
-        $('body').empty()
-        $('body').append(`<div class="add_remind">
+
+        $('#landingpage').empty()
+        $('#landingpage').append(`<div class="add_remind">
                             <div><img src="img/remind.png"></div>
                             <div>建立藥物提醒</div>
                             <div>讓您不再困惑藥物種類及服用時間</div>
                           </div>
-                          <button class="btn btn-dark mx-auto" id="add" type="button">新增提醒</button>`)        
+                          <button class="btn btn-dark mx-auto" id="add" type="button">新增提醒</button>`)    
       }
     }
     function Load_medNotify(userId){
-      $('body').empty()
-      $('body').append(`<div class="wrapper row mx-auto">
+      $('#landingpage').empty()
+      $('#landingpage').append(`<div class="wrapper row mx-auto">
                           <div class="content mx-auto">
                             <div id="medNotify_div">
                             </div>   

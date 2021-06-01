@@ -1,4 +1,4 @@
-body {
+section {
     margin: 0;
     padding: 0%;
 }
@@ -13,7 +13,7 @@ body {
 }
 
 
-button{
+button .btn-dark{
     position:fixed;
     bottom:2.8em;
     left:15vw;
