@@ -30,7 +30,6 @@
     <div id="superviseePillbox"></div>
     <div id="superviseePillboxs_list" style="display: none;"></div>
     <div id="pillDetail"></div>
-    <div id="landingPage"></div>
     <div id="footer" style="display: none;">
       <div class="blank"></div>
       <div class="blank1"></div>
@@ -38,10 +37,10 @@
     </div>     
   </body>
   <script>
-    function Load_landingPage(medNum){
+    function Load_landingPage(medNum, pillBox){
       if(medNum == 0){
-        $('#landingPage').empty()
-        $('#landingPage').append(`<div class="add_med">
+        $(`#${pillBox}`).empty()
+        $(`#${pillBox}`).append(`<div class="add_med">
                                     <div><img src="img/MED.png"></div>
                                     <div>建立我的藥盒</div>
                                     <div>新增目前服用的藥物至線上藥盒</div>
@@ -122,7 +121,7 @@
               $('#blank_underNavbar').css('display', 'initial')
             }
           }
-          Load_landingPage(Object.keys(data.user_Med).length) 
+          Load_landingPage(Object.keys(data.user_Med).length, pillBox) 
         }
       })     
     }
@@ -132,7 +131,7 @@
       $('#superviseePillbox').css('display','none')
       $('#superviseePillboxs_list').css('display', 'none')
       $('#footer').css('display', 'none')
-      $('#landingPage').empty()         
+       
 
       $('#pillDetail').append(`<div class="add">
                                 <div class="med_name">
@@ -169,7 +168,7 @@
                                 <div class="red_each">請輸入每次服用劑量</div>                                
                               </div>                            
                               <div class="blank1"></div>
-                              <input id="picURL" type="text">
+                              <input id="picURL" type="text" url="">
                               <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
                               <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>                        
                               <input id="med_id" type="hidden" value="">`)
@@ -180,10 +179,11 @@
 
     function Add_pillDetail(userId, pillBox){
       showWarningMsg()
-      if($('#name').val() && $('#picURL').val() && $('#total').val() && $('#each').val()){
+      if($('#med_name').val() && $('#picURL').attr('url') && $('#total').val() && $('#each').val()){
         $(this).css('disabled','true')
         $.ajax({
           url: 'add-med',
+          type: 'POST',
           data: {
             userId: userId,
             medName: $('#med_name').val(),
@@ -191,9 +191,9 @@
             onceAmount: $('#each').val(),
             queryCond: $('#create').val(),
             user_MedId: $('#med_id').val(),
-            medPicture: $('#picURL').val()
+            medPicture: $('#picURL').attr('url')
           },
-          success: function (data){
+          success: function (data){          
             $('#pillDetail').empty()
             Load_pillBox(userId, pillBox)          
           }
@@ -218,7 +218,6 @@
             $('#superviseePillboxs_list').css('display', 'none') 
             $('#pillDetail').empty()
             $('#supervisee').empty()
-            $('#landingPage').empty()
           })
           
           $('body').on('click', 'nav button:nth-child(2)', function(){
@@ -228,13 +227,11 @@
             $('#footer').css('display', 'none')
             $('#superviseePillboxs_list').css('display', 'initial')
             $('#pillDetail').empty()
-            $('#supervisee').empty()
-            $('#landingPage').empty()           
+            $('#supervisee').empty()      
           })
 
           $('body').on('click', '#add', function(){        
-            Load_pillDetail()
-            testupload()     
+            Load_pillDetail()  
           })
 
           $('body').on('click', '#create', function(){
@@ -263,10 +260,10 @@
                     }
                     $('.pic1').toggleClass('pic2', true)
                     $('.pic2').toggleClass('pic1', false)
-                    $(".pic2").prepend("<div style=\"background-image:url("+ value.medPicture +")\"></div>");
-                    
+                    $(".pic2").prepend("<div style=\"background-image:url("+ value.medPicture +")\"></div>")
+                    $('#picURL').attr('url', 'unchange')
                   }
-                  testupload()
+
                 })
                        
               }
@@ -282,8 +279,8 @@
               },
               success: function (data){
                 $('#item_' + user_MedId).remove()
-                if(!$('#supervisee').html()) Load_landingPage($('#myPillbox').children().length)
-                else Load_landingPage($('#superviseePillbox').children().length)
+                if(!$('#supervisee').html()) Load_landingPage($('#myPillbox').children().length, 'myPillbox')
+                else Load_landingPage($('#superviseePillbox').children().length, 'superviseePillbox')
 
               }
             })                
@@ -306,7 +303,22 @@
             $('#supervisee').html($(this).attr('userName'))
             Load_pillDetail()          
 
-          })  
+          })
+
+          $('body').on('change', '#pic', function(){
+            readURL(this)
+          })
+
+          $('body').on('click', '#upload-wrap button', function(){
+              $(".pic2").toggleClass('pic1', true);
+              $(".pic1").toggleClass('pic2', false);
+              $(".pic1 #showpic").remove();
+              $(".pic1").prepend("<div>(每種藥物僅可上傳一種照片)</div>");
+              $(".pic1").prepend("<div>上傳照片</div>");
+              $(".pic1").prepend("<div><img src=\"img/graph.png\"></div>");
+              $('#picURL').attr('url', '')
+
+          })            
 
         })        
       })

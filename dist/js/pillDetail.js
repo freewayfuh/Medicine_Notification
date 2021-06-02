@@ -1,7 +1,3 @@
-$("#pic").change(function(){
-	readURL(this);
-})
-
 function readURL(input){
 	if(input.files && input.files[0]){
 		$(".pic1 div:nth-child(1)").remove();
@@ -14,21 +10,12 @@ function readURL(input){
 		
 		reader.onload = function (e) {
 			$(".pic2").prepend("<div id=\"showpic\" style=\"background-image:url("+e.target.result+")\"\></div>");
-			$("#picURL").val(e.target.result);
+			$("#picURL").attr('url', e.target.result);
 		}
 		reader.readAsDataURL(input.files[0]);
 	}
 }
 
-$("#upload-wrap button").click(function(){
-		$(".pic2").toggleClass('pic1', true);
-		$(".pic1").toggleClass('pic2', false);
-		$(".pic1 #showpic").remove();
-		$(".pic1").prepend("<div>(每種藥物僅可上傳一種照片)</div>");
-		$(".pic1").prepend("<div>上傳照片</div>");
-		$(".pic1").prepend("<div><img src=\"img/graph.png\"></div>");
-		$("#picURL").val("");
-})
 
 function inputnumber(V){
 	if(V.value>=1000) V.value=V.value.slice(0,3)
@@ -43,8 +30,8 @@ function inputnumber(V){
 function showWarningMsg(){
 	if(!$('#med_name').val()) $('.red_name').css('display','block')
 	else $('.red_name').css('display','none')
-	
-	if(!$('#picURL').val()) $('.red_pic').css('display','block')
+
+	if(!$('#picURL').attr('url')) $('.red_pic').css('display','block')
 	else $('.red_pic').css('display','none')
 	
 	if(!$('#total').val()) $('.red_total').css('display','block')

@@ -9,6 +9,7 @@ const db_config = require('./config/db.js')
 const { formidable } = require('formidable')
 const bodyParser = require('body-parser')
 
+
 const lineConfig = {
   channelAccessToken: line_config.accessToken,
   channelSecret: line_config.secret
@@ -31,8 +32,7 @@ connection.connect(err => {
 
 })
 
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
-app.use(bodyParser.json({limit: '50mb', extended: true}))
+
 app.use(express.static(`${__dirname}/dist`))
 app.set('view engine', 'hbs')
 
@@ -61,10 +61,11 @@ app.post('/webhook', line.middleware(lineConfig), (req, res) => {
     .then((result) => res.json(result))
 })
 
+
 //Pill Box
 app.get('/load-pillBoxPage', (req, res) => {
   console.log(req.query.userId)
-  data = {}
+  let data = {}
   connection.query(`SELECT * FROM Supervise, user_Info WHERE supervisorId='${req.query.userId}' AND superviseeId=userId`,(err, result) => {
     if(err) console.log('fail to select:', err)
     data.supervise = result
@@ -79,22 +80,40 @@ app.get('/load-pillBoxPage', (req, res) => {
 })
 
 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
+app.use(bodyParser.json({limit: '50mb', extended: true}))
+
 app.post('/add-med', (req, res) => {
-  connection.query(`SELECT MAX(user_MedId) FROM user_Med`, (err, result) =>{
-    let picName = `${result + 1}.png`
-    fs.writeFile(`./dist/img/medPic/${picName}`, req.body.medPicture.split('base64,')[1])
-    
-    if(req.query.queryCond == 'insert'){
+  console.log(req.body.medPicture.length)
+  if(req.body.queryCond == 'insert'){
+    connection.query(`SELECT MAX(user_MedId) FROM user_Med`, (err, result) =>{
+      if(err) console.log('fail to select:', err)
+      connection.query(`ALTER table user_Med AUTO_INCREMENT=${result[0]['MAX(user_MedId)']}`,(err, result) => {
+        if(err) console.log('fail to alter table:', err)
+      })    
+      let picName = `${result[0]['MAX(user_MedId)']+1}.png`
+      fs.writeFile(`./dist/img/medPic/${picName}`, req.body.medPicture.split('base64,')[1], 'base64', function(err) {
+        console.log(err)
+      })
       connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.body.medName}', ${req.body.totalAmount}, ${req.body.onceAmount}, 'img/medPic/${picName}', '${req.body.userId}')`,(err, result) => {
         if(err) console.log('fail to insert:', err)
+        res.send('insert success')
       })
-    }else if(req.query.queryCond == 'update'){
-      connection.query(`UPDATE user_Med SET medName='${req.body.medName}', totalAmount=${req.body.totalAmount}, onceAmount=${req.body.onceAmount}, medPicture='img/medPic/${picName}' WHERE user_MedId=${req.body.user_MedId}`,(err, result) => {
-        if(err) console.log('fail to update:', err)
-      })     
-    }    
-  })
-  res.send('success')
+         
+    })
+  }else if(req.body.queryCond == 'update'){
+    connection.query(`UPDATE user_Med SET medName='${req.body.medName}', totalAmount=${req.body.totalAmount}, onceAmount=${req.body.onceAmount} WHERE user_MedId=${req.body.user_MedId}`,(err, result) => {
+      if(err) console.log('fail to update:', err)
+      if(req.body.medPicture != 'unchange'){
+        fs.writeFile(`./dist/img/medPic/${req.body.user_MedId}.png`, req.body.medPicture.split('base64,')[1], 'base64', function(err) {
+          console.log(err)
+          res.send('update success')
+        })
+      }else{
+        res.send()
+      }
+    })     
+  }
 })
 
 
@@ -111,6 +130,9 @@ app.get('/delete-med', (req, res) => {
   console.log(req.query.user_MedId)
   connection.query(`DELETE FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
     if(err) console.log('fail to delete:', err)
+    fs.unlink(`./dist/img/medPic/${req.query.user_MedId}.png`, (err) => {
+      if(err) throw err
+    })
     connection.query(`DELETE FROM user_Notify WHERE user_NotifyId NOT IN(SELECT DISTINCT user_NotifyId FROM Notify_Med)`,(err, result) => {
       if(err) console.log('fail to delete:', err)
     })    
@@ -121,10 +143,16 @@ app.get('/delete-med', (req, res) => {
 
 //Notify
 app.get('/get-notify', (req, res) => {
+  let data = {}
+  connection.query(`SELECT * FROM Supervise, user_Info WHERE supervisorId='${req.query.userId}' AND superviseeId=userId`,(err, result) => {
+    if(err) console.log('fail to select:', err)
+    data.supervise = result
+  })
+
   connection.query(`SELECT * FROM user_Notify WHERE userId='${req.query.userId}' ORDER BY notifyTime`,(err, result) => {
     if(err) console.log('fail to select:', err)
-    //console.log(result)
-    res.send(result)
+    data.user_Notify = result
+    res.send(data)
   })
 
 })
@@ -148,17 +176,17 @@ app.get('/pick-med', (req, res) => {
 app.get('/create-med-notify', (req, res) => {
   console.log(req.query.user_MedId)
 
-  if(req.query.queryCond == 'insert'){  
+  if(req.query.queryCond == 'insert'){
     console.log('insert')
-    let user_NotifyId
+
     connection.query(`INSERT INTO user_Notify(notifyTime, userId, switch) VALUES ('${req.query.hour}:${req.query.min}','${req.query.userId}', 'checked')`,(err, result) => {
-      if(err) console.log('fail to select:', err)
+      if(err) console.log('fail to insert test:', err)
     })
-    connection.query(`SELECT user_NotifyId FROM user_Notify WHERE notifyTime='${req.query.hour}:${req.query.min}' AND userId='${req.query.userId}'`,(err, result) => {
+    connection.query(`SELECT MAX(user_NotifyId) FROM user_Notify`,(err, result) => {
       if(err) console.log('fail to select:', err)
       req.query.user_MedId.forEach(element => {
-        connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${result[0].user_NotifyId}, ${element})`,(err, result) => {
-          if(err) console.log('fail to select:', err)
+        connection.query(`INSERT INTO Notify_Med(user_NotifyId, user_MedId) VALUES (${result[0]['MAX(user_NotifyId)']}, ${element})`,(err, result) => {
+          if(err) console.log('fail to insert:', err)
         })    
       })
     })
@@ -400,10 +428,6 @@ function handleEvent(event) {
 
   if (event.message.id == '100001') return 200 // to deal with verify dummy data
 
-  // return client.replyMessage(event.replyToken, { 
-  //   type: 'text',
-  //   text: event.message.text
-  // })
 }
 
 
