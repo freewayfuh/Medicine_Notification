@@ -1,10 +1,9 @@
-section {
+body {
     margin: 0;
     padding: 0%;
 }
 .wrapper {
     width: 100vw;
-    max-height: 70vh;
 }
 
 .title {
