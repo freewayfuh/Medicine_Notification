@@ -4,6 +4,7 @@ section {
 }
 .wrapper {
     width: 100vw;
+    max-height: 70vh;
 }
 
 .title {
@@ -13,7 +14,7 @@ section {
 }
 
 
-button .btn-dark{
+button .btn{
     position:fixed;
     bottom:2.8em;
     left:15vw;
@@ -23,15 +24,7 @@ button .btn-dark{
     transform:translateZ(0);
 }
 
-/*
-.footer {
-    position: fixed;
-    left: 0%;
-    bottom: 0;
-    right: 0%;
-    width: 100vw;
-}
-*/
+
 .blank {
     position: fixed;
     left: 0%;

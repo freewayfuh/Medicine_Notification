@@ -38,6 +38,7 @@ input[type="text"] {
     height: 12vw;
     bottom: 2.8em !important;
     color: #FFFFFF !important;
+    border-radius: 20px;
 }
 
 #backbtn, #submitbtn {

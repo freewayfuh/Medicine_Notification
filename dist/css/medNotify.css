@@ -1,4 +1,4 @@
-section {
+body {
     background-color: #F0F0F0;
 }
 .time {
@@ -13,6 +13,12 @@ section {
 .time a {
     position: relative;
     left: -26vw!important;
+}
+@media screen and (min-width:450px ) {
+    .time a {
+        position: relative;
+        left: -20vw!important;
+    }
 }
 
 
