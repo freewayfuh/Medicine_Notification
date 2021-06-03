@@ -394,6 +394,11 @@ function handleEvent(event) {
             "type": "uri",
             "label": "新增藥物",
             "uri" : "https://liff.line.me/1655949102-WX1rbAJw"
+          },
+          {
+            "type":"uri",
+            "label":"新增提醒",
+            "uri":"https://liff.line.me/1655949102-QOy7mkzW"
           }
         ]
       }
