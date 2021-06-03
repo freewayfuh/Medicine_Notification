@@ -5,6 +5,7 @@ grid-template-rows: 6vw 10vw 1vw 10vw 3vw 10vw 1vw 25vw 3vw 10vw 1vw 10vw 3vw 10
 grid-column-gap: 0px;
 grid-row-gap: 0px;
 }
+
 .med_name{
 grid-area: 2/2/3/3;
 }
@@ -165,6 +166,26 @@ color:#c4c4c4:
 ::-ms-input-placeholder{
 color:#c4c4c4;    
 }
+
+.red_name,.red_pic,.red_total,.red_each{
+  color:#fd614b;
+  display:none;
+  font-size:2.5vw;
+}
+.red_name{
+  grid-area: 3/2/4/3;
+}
+.red_pic{
+  grid-area: 7/2/8/3;
+}
+.red_total{
+  grid-area: 11/2/12/3;
+}
+.red_each{
+  grid-area: 15/2/16/3;
+}
+
+
 #cancel:hover{
 background-color:#7d7d7d;    
 }

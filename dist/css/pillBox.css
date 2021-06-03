@@ -1,6 +1,8 @@
 body{
     font-family:arial;  
   }
+
+
 .med {
 display: grid;
 grid-template-columns: 5vw 30vw 3.5vw 0.25vw 56vw 0.25vw 5vw;

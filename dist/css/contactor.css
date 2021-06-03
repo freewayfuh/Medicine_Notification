@@ -1,0 +1,74 @@
+.contacter_med{
+    display: grid;
+    grid-template-columns: 6vw 13vw 5vw 30vw 20vw 2vw 20vw 2vw;
+    grid-template-rows: 2vw 13vw 2vw;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+}
+
+.profile{ 
+    grid-area: 2/2/3/3;
+    border-radius:50%;
+    background-color:white;
+    background-position:center center;
+    background-size:13vw 13vw;
+    padding:0;
+    overflow:hidden;
+    background-repeat:no-repeat;
+    max-width:100%;
+    max-height:100%;
+}
+
+.appellation{ 
+grid-area: 2/4/3/5;
+display:flex;
+align-items:center;
+font-size:4vw;
+font-weight:bold;
+}
+
+.add_new{ 
+grid-area: 2/5/3/6;
+}
+
+.view{ 
+grid-area: 2/7/3/8;
+}
+
+.add_new,.view{
+display:flex;
+align-items:center;  
+}
+.add_new button,.view button{
+background-color:transparent;
+border:0;
+padding:0;
+border-radius:5vw;  
+}
+
+#add_new,#view{
+display:flex;
+justify-content:center;
+align-items:center;
+width:20vw;
+height:10vw;
+border-radius:5vw;
+color:white;
+font-size:4vw;
+font-weight:bold;  
+}
+
+#add_new{
+background-color:#27ae60;	
+}
+
+#view{
+background-color:#f3be00;	
+}
+
+#add_new img,#view img{
+width:4.5vw;
+height:4.5vw;
+margin-right:2vw;
+margin-bottom:0.5vw;  
+}     

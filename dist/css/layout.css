@@ -1,9 +1,10 @@
-body {
+section {
     margin: 0;
     padding: 0%;
 }
 .wrapper {
     width: 100vw;
+    max-height: 70vh;
 }
 
 .title {
@@ -13,7 +14,7 @@ body {
 }
 
 
-button{
+button .btn{
     position:fixed;
     bottom:2.8em;
     left:15vw;
@@ -21,7 +22,6 @@ button{
     width:70vw;
     max-width:440px;
     transform:translateZ(0);
-    
 }
 
 
@@ -29,14 +29,18 @@ button{
     position: fixed;
     left: 0%;
     bottom: 0;
+    right: 0%;
     height: 7em;
     width: 100vw;
     background-color:white;
 }
 
 
+
+
+
 .btnHeight {
-    height: 10em;
+    height: 7em;  
 }
 
 
