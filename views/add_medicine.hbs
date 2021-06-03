@@ -20,7 +20,7 @@
     <title>藥盒</title>
   </head>
   <body>
-    <nav >
+    <nav style="display: none;">
       <button><div class="mine">我的藥盒<div id="mine"></div></div></button>
       <button><div class="contacter">被提醒人的藥盒<div id="contacter"></div></div></button>	
     </nav>
@@ -96,7 +96,7 @@
           if(pillBox == 'myPillbox' && $('#superviseePillboxs_list').children().length == 0){              
             $.each(data.supervise, function (key, value){
               $('#superviseePillboxs_list').append(`<div class="contacter_med">
-                                                      <div class="profile" style="background-image:url(img/remove.png)"></div>
+                                                      <div class="profile" style="background-image:url(${value.picture})"></div>
                                                       <div class="appellation">${value.userName}</div>
                                                       <div class="add_new">
                                                         <button class="btn mx-auto supervisee_add" value="${value.userId}" userName="${value.userName}">

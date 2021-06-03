@@ -89,7 +89,7 @@
           if(medNotify == 'myMedNotify' && $('#superviseeMedNotifys_list').children().length == 0){              
             $.each(data.supervise, function (key, value){
               $('#superviseeMedNotifys_list').append(`<div class="contacter_med">
-                                                        <div class="profile" style="background-image:url(img/remove.png)"></div>
+                                                        <div class="profile" style="background-image:url(${value.picture})"></div>
                                                         <div class="appellation">${value.userName}</div>
                                                         <div class="add_new">
                                                           <button class="btn mx-auto supervisee_add" value="${value.userId}" userName="${value.userName}">

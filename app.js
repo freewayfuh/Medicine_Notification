@@ -261,109 +261,112 @@ app.get('/create-inviteCode', (req, res) =>{
 const client = new line.Client(lineConfig)
 
 function run() {
-  //var push_msg = []
   var now = new Date()
-  
-  connection.query(`INSERT INTO user_Notify_temp SELECT * FROM user_Notify WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
-    if(err) console.log('fail to select:', err)
-  })
 
-  connection.query(`SELECT * FROM user_Notify WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'
-                    UNION SELECT * FROM user_Notify_temp WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
-    if(err) console.log('fail to select:', err)
+  if (now.getSeconds() == 0) {  // 這樣就只會執行一次
+    connection.query(`INSERT INTO user_Notify_temp SELECT * FROM user_Notify WHERE switch = 'checked' AND notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
+      if (err) console.log('fail to INSERT:', err)
+    })
+  }
+
+  // connection.query(`SELECT * FROM user_Notify WHERE switch = 'checked'`, (err, result) => {
+  //   if (err) console.log('fail to SELECT:', err)
+  //   console.log(result)
+  // })
+
+  connection.query(`SELECT user_NotifyId, notifyTime, userId FROM user_Notify WHERE switch = 'checked' AND notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'
+                    UNION SELECT user_NotifyId, notifyTime, userId FROM user_Notify_temp WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'`, (err, result) => {
+    if (err) console.log('fail to SELECT:', err)
+    if (result.length == 0) return;
     console.log(result)
-    // console.log(result.length)
+    console.log()
 
-    if (result.length != 0) {
-      for (var i = 0; i < result.length; i++) {
-        console.log('i =', i, 'userId =', result[i]['userId'])
-        
-        connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 10 MINUTE) WHERE user_NotifyId = ${ result[i]['user_NotifyId']}`, (err, result) => {
-          if(err) console.log('fail to UPDATE:', err)
-        })
+    var now = new Date()
+    for (var i = 0; i < result.length; i++) {
+      // 次數+1
+      connection.query(`UPDATE user_Notify_temp SET time = time + 1 WHERE userId = '${result[i]['userId']}'`, (err, result) => {
+        if (err) console.log('fail to UPDATE:', err)
+      })
 
-        var message = {
-          "type": "template",
-          "altText": "this is a carousel template",
-          "template": {
-            "type": "carousel",
-            "columns": [
-              {
-                "title": "您服用藥物了嗎？",
-                "text": "若服用完藥物，點選「吃了」，若還沒服用，可以點選「還沒吃」，我們將10分鐘後提醒您。",
-                "actions": [
-                  {
-                    "type": "message",
-                    "label": "吃了",
-                    "text": "吃了"
-                  },
-                  {
-                    "type": "message",
-                    "label": "還沒吃",
-                    "text": "還沒吃"
-                  }
-                ]
-              }
-            ]
-          }
-        }
+      // 提醒三次就停止提醒
+      connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result) => {
+        if (err) console.log('fail to DELETE:', err)
+      })
 
-        var now = new Date()
-        var drug = {
-          type : 'text',
-          text : `現在是${now.getHours()}:${now.getMinutes()}，記得藥服用以下藥物：`
-          
-        }
-
-        connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
-          if(err) console.log('fail to select:', err)
-        })
-
-        var carousel_msg = {
-          "type": "template",
-          "altText": "this is an image carousel template",
-          "template": {
-            "type": "image_carousel",
-            "columns": [
-            ]
-          }
-        }
-
-
-        connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND Notify_Med.user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
-          if(err) console.log('fail to UPDATE:', err)
-          result.forEach(element => {            
-            carousel_msg.template.columns.push({
-              "imageUrl": element.medPicture,
-              "action": {
-                "type": "message",
-                "label": `${element.medName}，${element.onceAmount}顆`,
-                "text": `${element.medName}，${element.onceAmount}顆`
-              }
-            })  
-          })
-
-        })
-
-        var r = result[i]['userId']
-
-
-        
-        client.pushMessage(r, drug)
-        setTimeout(function(){client.pushMessage(r, carousel_msg);}, 1000)
-        setTimeout(function(){client.pushMessage(r, message);}, 2000)
-
-        //client.pushMessage(result[i]['userId'], carousel_msg)
-        //client.pushMessage(result[i]['userId'], drug)
-        //client.pushMessage(result[i]['userId'], message)
+      var drug = {
+        type : 'text',
+        text : `現在時間是${now.getHours()}:${now.getMinutes()}，記得藥服用以下藥物：`
       }
+
+      var carousel_msg = {
+        type : "template",
+        altText : "this is an image carousel template",
+        template : {
+          type : "image_carousel",
+          columns : []
+        }
+      }
+
+      var check_message = {
+        type : "template",
+        altText : "This is a buttons template",
+        template : {
+            type : "buttons",
+            title : "您服用藥物了嗎？",
+            text : "若服用完藥物，點選「吃了」，若還沒服用，我們將10分鐘後提醒您。",
+            actions : [
+                {
+                  type : "postback",
+                  label : "吃了",
+                  text : "吃了",
+                  data : `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+                }
+            ]
+        }
+      }
+
+      connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 10 MINUTE) WHERE user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+        if (err) console.log('fail to UPDATE:', err)
+      })
+      
+      connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND Notify_Med.user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+        if (err) console.log('fail to UPDATE:', err)
+        result.forEach(element => {
+          carousel_msg.template.columns.push({
+            "imageUrl": element.medPicture,
+            "action": {
+              "type": "message",
+              "label": `${element.medName}，${element.onceAmount}顆`,
+              "text": `${element.medName}，${element.onceAmount}顆`
+            }
+          })  
+        })
+      })
+
+      const message = []
+      message.push(drug)
+      message.push(carousel_msg)    // console.log 顯示出來的時候 columns 是空的，但是最後送出來又有 真神奇！
+      message.push(check_message)
+      console.log(message)
+
+      var r = result[i]['userId']   // 不知為啥一定要獨立出來寫才不會 TypeError: Cannot read property 'userId' of undefined (好像有query 就會有延遲和同步問題)
+
+      // 因為非同步問題，所以要讓 replyMessage 延後一秒再執行，才會有所有訊息
+      setTimeout(function(){client.pushMessage(r, message);}, 1000)
+
+      // var r = result[i]['userId']
+      // client.pushMessage(r, drug)
+      // setTimeout(function(){client.pushMessage(r, carousel_msg);}, 1000)
+      // setTimeout(function(){client.pushMessage(r, check_message);}, 2000)
+
+      // client.pushMessage(r, drug)
+      // client.pushMessage(r, carousel_msg)
+      // client.pushMessage(r, check_message)
     }
   })
 }
-/*
-run()
-setInterval(run, 60000)
-*/
+
+setInterval(run, 1000)
 
 function handleEvent(event) {
 
@@ -433,7 +436,43 @@ function handleEvent(event) {
 
   if (event.message.id == '100001') return 200 // to deal with verify dummy data
 
+  if (event.type == 'postback') {
+    const message = [{
+      type: 'text',
+      text: '收到'
+    }];
+
+    connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${event.postback.data}' AND userId = '${event.source.userId}'`, (err, result) => {
+      if (err) console.log('fail to DELETE:', err)
+    })
+    
+    connection.query(`UPDATE user_Med SET totalAmount = totalAmount - onceAmount WHERE userId = '${event.source.userId}' AND totalAmount >= onceAmount`, (err, result) => {
+      if (err) console.log('fail to UPDATE:', err)
+    })
+
+    connection.query(`SELECT medName, totalAmount, onceAmount FROM user_Med WHERE userId = '${event.source.userId}'`, (err, result) => {
+      if (err) console.log('fail to SELECT', err)
+      console.log(result)
+      console.log()
+
+      for (var i = 0; i < result.length; i++) {
+        if (result[i].totalAmount <= result[i].onceAmount * 3) {
+          message.push(
+            {
+              type: 'text',
+              text: `警告！"${result[i].medName}"即將不足！\n請盡速捕貨`
+            }
+          )
+        }
+      }
+    })
+
+    // 因為非同步問題，所以要讓 replyMessage 延後一秒再執行，才會有所有訊息
+    setTimeout(function(){client.replyMessage(event.replyToken, message);}, 1000)   // replyToken 只能用一次
+  }  
+
 }
+
 
 
 const server = https.createServer(sslOptions, app)
