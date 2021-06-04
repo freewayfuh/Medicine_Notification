@@ -1,6 +1,13 @@
 body {
     background-color: #F0F0F0;
 }
+
+
+.remind-box {
+    width: 90vw !important;
+}
+
+
 .time {
     font-size: 3em;
     margin: 1em 0 0 0!important;;
@@ -9,9 +16,6 @@ body {
     border-radius: 20px 20px 0 0;
 }
 
-.add_remind {
-    max-height: 66vh;
-}
 
 .time a {
     position: relative;
@@ -71,14 +75,14 @@ input[type="button"] {
 
 .deledit_Row {
     background-color: #F0F0F0;
-    border-top: 2px solid  #C4C4C4 ;
+    border-top: 1px solid  #C4C4C4 ;
     border-bottom-left-radius:  20px;
     border-bottom-right-radius:  20px;
     height: 10vw !important;
 }
 
 .separate {
-    max-width: 2px !important;
+    max-width: 1px !important;
     background-color: #c4c4c4;
     margin: 0  !important;
     padding: 0  !important;
@@ -179,7 +183,7 @@ input[type="button"] {
 .form-check.form-switch  > input{
     position: relative;
     top: 2vw;
-    left: 63vw;
+    left: 72vw !important;
     height: 0.5em;
     width: 1em;
     border: #C4C4C4;

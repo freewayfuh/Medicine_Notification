@@ -47,11 +47,3 @@ button .btn{
     height: 7em;  
 }
 
-
-#landing_img {
-    width: 10vw !important; 
-    min-width: 200px !important; 
-    height: 10vw;
-    min-height: 200px;
-    margin-top: 9em !important;
-}
