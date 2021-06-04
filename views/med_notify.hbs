@@ -47,7 +47,9 @@
                                     <div>建立藥物提醒</div>
                                     <div>讓您不再困惑藥物種類及服用時間</div>
                                   </div>`)        
+         $('blank_underNavbar').css('display', 'none')
          $('.btnHeight').css('display', 'none')
+         $('.blank').css('display', 'none')
       }
     }
     function Load_medNotify(userId, medNotify){
@@ -211,6 +213,7 @@
             $('#superviseeMedNotifys_list').css('display', 'none') 
             $('#pickMedPage').empty()
             $('#supervisee').empty()
+            $('#blank_underNavbar').css('display','initial')
             
           })
           
@@ -270,6 +273,7 @@
             if(!$('#supervisee').html()) Add_medNotify(profile.userId, 'myMedNotify')
             else Add_medNotify($('#supervisee').val(), 'superviseeMedNotify')  
             $('btnHeight').css('display', 'initial')
+            $('.blank').css('display', 'initial')
           })
                            
           $('body').on('click', '#confirmDelbtn', function(){
