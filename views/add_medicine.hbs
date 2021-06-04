@@ -10,6 +10,7 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="js/pillDetail.js" type="text/javascript"></script>
     <script src="js/navAnimate.js" type="text/javascript"></script>
+    <script src="js/pillBox.js" type="text/javascript"></script>
     <link href="css/pillBox.css" rel="stylesheet">
     <link href="css/pageInit.css" rel="stylesheet">
     <link href="css/medDetail.css" rel="stylesheet">
@@ -46,6 +47,8 @@
                                     <div>新增目前服用的藥物至線上藥盒</div>
                                   </div>
                                   <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
+        $('.blank').css('display', 'none')
+        $('#blank_underNavbar').css('display', 'none')
       }
     }
 
@@ -58,9 +61,10 @@
         data: {userId: userId},
         success: function (data){
           $('#footer').css('display', 'initial')
+          $('#blank_underNavbar').css('display', 'initial') 
           $.each(data.user_Med, function (key, value){
             $(`#${pillBox}`).append(`<div class="item" id="item_${value.user_MedId}">
-                                    <div class="med">
+                                    <div class="med"></div>
                                       <div class="image" style="background-image:url(${value.medPicture})"></div>
                                       <div class="info"></div>
                                       <div class="name">${value.medName}</div>
@@ -74,24 +78,35 @@
                                           <div class="two">每次劑量</div>
                                         </div>
                                       </div>
-                                    </div>
+                                    <div class="line"></div>
                                     <div class="ope">
-                                        <button id="delete" type="button" value="${value.user_MedId}">
+                                        <button type="button" value="${value.user_MedId}" onclick="warning(this.value)">
                                           <div class="delete">
-                                            <div><img src="img/delete.png"></div>
+                                            <div></div>
                                             <div>刪除</div>
                                           </div>
                                         </button>
-                                        <button id="edit" type="button" value="${value.user_MedId}">
+                                        <div class="separate"></div>
+                                        <button id="edit"  type="button" value="${value.user_MedId}">
                                           <div class="edit">
-                                            <div><img src="img/edit.png"></div>
+                                            <div></div>
                                             <div>編輯</div>
                                           </div>
                                         </button>
                                     </div>
                                   </div>`)
                               
-          })  
+          })
+          $(`#${pillBox}`).append(`<div id="hide"></div>
+	                                <div id="popWindow">
+	                                    <div><img src="img/warning.png"></div>
+	                                    <div>您確定要刪除這筆藥物嗎?</div>
+                                      <div>
+		                                    <button onclick="cancel()"><div>取消刪除</div></button>
+		                                    <button><div id="delete">確認刪除</div></button>
+	                                    </div>	  
+	                                </div>`)
+          $('.blank').css('display', 'block')                          
 
           if(pillBox == 'myPillbox' && $('#superviseePillboxs_list').children().length == 0){              
             $.each(data.supervise, function (key, value){
@@ -138,7 +153,7 @@
                                   <div><img src="img/medicine.png"></div>
                                   <div>藥物名稱</div>
                                 </div>
-                                <div class="name1"><input id="med_name" type="text" placeholder="  請輸入藥物名稱" value=""></div>
+                                <div class="name1"><input id="med_name" type="text" placeholder="請輸入藥物名稱" value=""></div>
                                 <div class="pic">
                                   <div><img src="img/medicine.png"></div>
                                   <div>藥物照片</div>
@@ -148,18 +163,18 @@
                                   <div>上傳照片</div>
                                   <div>(每種藥物僅可上傳一種照片)</div>
                                   <div><button></button></div>
-                                  <label class="upload"><input id="pic" type="file" accept="image/*"></label>
+                                  <label><input id="pic" type="file" accept="image/*"></label>
                                 </div>
                                 <div class="total">
                                   <div><img src="img/medicine.png"></div>
                                   <div>藥物總量</div>
-                                  <div>(單位:個)</div>
+                                  <div>(單位 : 個)</div>
                                 </div>
                                 <div class="total1"><input id="total" type="number" placeholder="20" value="" step="0.5" min="0" oninput="inputnumber(this)"></div>
                                 <div class="each">
                                   <div><img src="img/medicine.png"></div>
                                   <div>每次服用劑量</div>
-                                  <div>(單位:個)</div>
+                                  <div>(單位 : 個)</div>
                                 </div>
                                 <div class="each1"><input id="each" type="number" placeholder="1" value="" step="0.5" min="0" oninput="inputnumber(this)"></div>
                                 <div class="red_name">請輸入藥物名稱</div>
@@ -195,6 +210,7 @@
           },
           success: function (data){          
             $('#pillDetail').empty()
+            $('#blank_underNavbar').css('display', 'initial')
             Load_pillBox(userId, pillBox)          
           }
         })
@@ -218,6 +234,8 @@
             $('#superviseePillboxs_list').css('display', 'none') 
             $('#pillDetail').empty()
             $('#supervisee').empty()
+            if($('.blank').css('display')=='none')
+              $('#blank_underNavbar').css('display', 'none') 
           })
           
           $('body').on('click', 'nav button:nth-child(2)', function(){
@@ -227,10 +245,12 @@
             $('#footer').css('display', 'none')
             $('#superviseePillboxs_list').css('display', 'initial')
             $('#pillDetail').empty()
-            $('#supervisee').empty()      
+            $('#supervisee').empty()
+            $('#blank_underNavbar').css('display', 'initial')      
           })
 
-          $('body').on('click', '#add', function(){        
+          $('body').on('click', '#add', function(){ 
+            $('#blank_underNavbar').css('display', 'none')       
             Load_pillDetail()  
           })
 
@@ -271,7 +291,10 @@
           })
 
           $('body').on('click', '#delete', function(){
-            let user_MedId = $(this).attr('value') 
+            let user_MedId = $(this).attr('value')
+            $('body').css('overflow','scroll');
+            $('#hide').css('display','none'); 
+            $('#popWindow').css('display','none'); 
             $.ajax({
               url: '/delete-med',
               data: {
