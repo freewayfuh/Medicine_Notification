@@ -1,6 +1,13 @@
 body {
     background-color: #F0F0F0;
 }
+
+
+.remind-box {
+    width: 80vw !important;
+}
+
+
 .time {
     font-size: 3em;
     margin: 1em 0 0 0!important;;
@@ -9,9 +16,6 @@ body {
     border-radius: 20px 20px 0 0;
 }
 
-.add_remind {
-    max-height: 66vh;
-}
 
 .time a {
     position: relative;
@@ -179,7 +183,7 @@ input[type="button"] {
 .form-check.form-switch  > input{
     position: relative;
     top: 2vw;
-    left: 63vw;
+    left: 65vw !important;
     height: 0.5em;
     width: 1em;
     border: #C4C4C4;

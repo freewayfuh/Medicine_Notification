@@ -82,11 +82,11 @@ input[type="text"] {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     min-height: 50vh;
-    width: 99.5vw;
+    width: 100vw;
     padding: 5vw;
-    position: relative;
-    left: -8vw !important;
     margin: 0;
+    position: relative;
+    left: -2vw!important;
 }
 
 

@@ -59,7 +59,7 @@
         success: function (data){
           $('#footer').css('display', 'initial')
           $.each(data.user_Notify, function (key, value){
-            $(`#${medNotify}`).append(`<div id="med_notify_div_${value.user_NotifyId}">
+            $(`#${medNotify}`).append(`<div id="med_notify_div_${value.user_NotifyId}" class="remind-box mx-auto">
                                           <div class="time form-check form-switch">
                                             <a>${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</a>
                                             <input class="form-check-input switchbtn" type="checkbox" value="${value.user_NotifyId}" ${value.switch}>
