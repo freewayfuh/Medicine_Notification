@@ -38,7 +38,7 @@ input[type="text"] {
     height: 12vw;
     bottom: 2.8em !important;
     color: #FFFFFF !important;
-    border-radius: 20px;
+    border-radius: 12px;
 }
 
 #backbtn, #submitbtn {
@@ -82,10 +82,11 @@ input[type="text"] {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     min-height: 50vh;
-    width: 100vw;
+    width: 99.5vw;
     padding: 5vw;
     position: relative;
-    left: -3vw;
+    left: -8vw !important;
+    margin: 0;
 }
 
 

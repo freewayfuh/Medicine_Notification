@@ -3,7 +3,7 @@ body {
     padding: 0%;
 }
 .wrapper {
-    width: 100vw;
+  width: 100vw;
 }
 
 .title {
@@ -23,6 +23,11 @@ button .btn{
     transform:translateZ(0);
 }
 
+
+.btn , .btn:active, .btn:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
 
 .blank {
     position: fixed;

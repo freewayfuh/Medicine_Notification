@@ -64,10 +64,11 @@
                                             <a>${value.notifyTime.split(':')[0]}:${value.notifyTime.split(':')[1]}</a>
                                             <input class="form-check-input switchbtn" type="checkbox" value="${value.user_NotifyId}" ${value.switch}>
                                           </div>
-                                          <div class="row mx-auto px-2 pb-3 med_div" id="${medNotify}_${value.user_NotifyId}">
+                                          <div class="row mx-auto px-4 pb-4 med_div" id="${medNotify}_${value.user_NotifyId}">
                                           </div>
-                                          <div class="row mx-auto">
+                                          <div class="row mx-auto deledit_Row">
                                             <input class="deletebtn col btn" type="button" value="  刪除" del_user_NotifyId="${value.user_NotifyId}">
+                                            <div class="separate"></div>
                                             <input class="editbtn col btn" type="button" value="  編輯" edit_user_NotifyTime="${value.notifyTime}" edit_user_NotifyId="${value.user_NotifyId}">
                                           </div>
                                         </div>`)
@@ -134,7 +135,7 @@
 
           $('#pickMedPage').append(`<div class="timeCheck">
                                       <div class="mx-auto my-5">
-                                        <input type="text" id="hour" name="hour" placeholder="0" value="">
+                                        <input type="text" id="hour" name="hour" placeholder="00" value="">
                                         :
                                         <input type="text" id="min" name="min" placeholder="00" value="">
                                       </div>  
@@ -304,6 +305,7 @@
           })
 
           $('body').on('click', '#cancelDelbtn', function(){
+            
             $('.alert-bg').remove()
             $('.alert-msg').remove()
             $('body').css('overflow', 'scroll')
@@ -346,6 +348,26 @@
           })
 
           $('body').on('click', '#cancelbtn', function(){
+            $('body').append(`<div class="alert-bg"></div>
+                                        <div class="alert-msg">
+                                          <img>
+                                          <p>資料尚未新增完成<br>您確定要離開此頁面？</p>
+                                          <div class="row justify-content-around">
+                                            <input class="col-sm-4 btn" type="button" value="取消" id="backtoSelbtn">
+                                            <input class="col-sm-4 btn" type="button" value="確認" id="cancelSelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
+                                          </div>
+                                        </div>`)
+              $('body').css('overflow', 'hidden')
+          })
+
+          $('body').on('click', '#backtoSelbtn', function(){
+              $('.alert-msg').remove()
+              $('.alert-bg').remove()
+              $('body').css('overflow', 'scroll')
+          })
+
+
+          $('body').on('click', '#cancelSelbtn', function(){
             liff.closeWindow()
           })
 
