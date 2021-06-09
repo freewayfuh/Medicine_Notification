@@ -157,7 +157,7 @@ height:25vw;
 width:100vw;
 background-color:white;  
 }
-#cancel{
+#cancelbtn{
 position:fixed;
 bottom:2em;
 left:5vw;
@@ -168,7 +168,7 @@ background-color:#a4a4a4;
 color:white;
 font-size:4vw;    
 }
-#create{
+#createbtn{
 position:fixed;
 bottom:2em;
 right:5vw;
@@ -179,10 +179,10 @@ background-color:#27ae60;
 color:white;
 font-size:4vw;    
 }
-#cancel:hover{
+#cancelbtn:hover{
 background-color:#7d7d7d;    
 }
-#create:hover{
+#createbtn:hover{
 background-color:#219357;    
 }
 #picURL{

@@ -84,7 +84,6 @@ app.use(bodyParser.urlencoded({limit: '50mb', extended: true}))
 app.use(bodyParser.json({limit: '50mb', extended: true}))
 
 app.post('/add-med', (req, res) => {
-  console.log(req.body.medPicture.length)
   if(req.body.queryCond == 'insert'){
     connection.query(`SELECT MAX(user_MedId) FROM user_Med`, (err, result) =>{
       if(err) console.log('fail to select:', err)
@@ -126,8 +125,7 @@ app.get('/edit-med', (req, res) => {
 })
 
 
-app.get('/delete-med', (req, res) => {
-  console.log(req.query.user_MedId)
+app.get('/delete-med', (req, res) => { 
   connection.query(`DELETE FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
     if(err) console.log('fail to delete:', err)
     fs.unlink(`./dist/img/medPic/${req.query.user_MedId}.png`, (err) => {
@@ -137,7 +135,7 @@ app.get('/delete-med', (req, res) => {
       if(err) console.log('fail to delete:', err)
     })    
     res.send('delete success')
-  })  
+  })
 })
 
 

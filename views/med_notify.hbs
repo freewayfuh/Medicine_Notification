@@ -9,11 +9,14 @@
     <script src="js/rolldate.min.js" type="text/javascript"></script>
     <script src="js/setTime.js" type="text/javascript"></script>
     <script src="js/navAnimate.js" type="text/javascript"></script>
+    <script src="js/switchPage.js" type="text/javascript"></script>
+    <script src="js/warningBox.js" type="text/javascript"></script>    
     <link href="css/layout.css" rel="stylesheet">
     <link href="css/pickMed.css" rel="stylesheet">
     <link href="css/medNotify.css" rel="stylesheet">
+    <link href="css/contactor.css" rel="stylesheet"> 
     <link href="css/navBar.css" rel="stylesheet">
-    <link href="css/contactor.css" rel="stylesheet">       
+    <link href="css/warningBox.css" rel="stylesheet">      
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <title>藥物提醒</title>
   </head>
@@ -32,6 +35,17 @@
       </div>        
     </div>
     <div id="superviseeMedNotifys_list" style="display: none;"></div>
+    <div id="warningBox">
+      <div id="hide"></div>
+      <div id="popWindow">
+        <div><img src="img/warning.png"></div>
+        <div>您確定要刪除這筆通知嗎?</div>
+        <div>
+          <button onclick="cancel()">取消</button>
+          <button id="confirmBtn" value="">確認</button>
+        </div>	  
+      </div>      
+    </div>    
     <div id="footer" style="display: none;">
       <div class="blank"></div>
       <button class="btn btn-dark mx-auto" type="button" id="add">新增提醒</button>
@@ -47,9 +61,8 @@
                                     <div>建立藥物提醒</div>
                                     <div>讓您不再困惑藥物種類及服用時間</div>
                                   </div>`)        
-         $('blank_underNavbar').css('display', 'none')
-         $('.btnHeight').css('display', 'none')
-         $('.blank').css('display', 'none')
+        $('.btnHeight').css('display', 'none')
+        $('.blank').css('display', 'none')
       }
     }
     function Load_medNotify(userId, medNotify){
@@ -206,25 +219,20 @@
         $(document).ready(function(){
           Load_medNotify(profile.userId, 'myMedNotify')
           $('body').on('click', 'nav button:nth-child(1)', function(){            
-            Nav_mine_animate()            
-            $('#myMedNotify').css('display', 'initial')
-            $('#superviseeMedNotify').css('display', 'none')
-            $('#footer').css('display', 'initial')
-            $('#superviseeMedNotifys_list').css('display', 'none') 
-            $('#pickMedPage').empty()
-            $('#supervisee').empty()
-            $('#blank_underNavbar').css('display','initial')
+            if($('#submitbtn').length){
+              warningLeave()
+            }else{
+              switchToMineNotify()
+            }
             
           })
           
           $('body').on('click', 'nav button:nth-child(2)', function(){
-            Nav_contactor_animate()            
-            $('#myMedNotify').css('display','none')
-            $('#superviseeMedNotify').css('display', 'none')
-            $('#footer').css('display', 'none')
-            $('#superviseeMedNotifys_list').css('display', 'initial')
-            $('#pickMedPage').empty()
-            $('#supervisee').empty()                    
+            if($('#submitbtn').length){
+              warningLeave()
+            }else{            
+              switchToContactorNotify()
+            }                
           })          
 
           $('body').on('click', '#add', function(){ 
@@ -276,46 +284,35 @@
             $('.blank').css('display', 'initial')
           })
                            
-          $('body').on('click', '#confirmDelbtn', function(){
-            let user_NotifyId = $(this).attr('del_user_NotifyId')
-            $.ajax({
-              url: 'delete-notify',
-              data: {user_NotifyId: user_NotifyId},
-              success: function (data){
-                $('.alert-bg').remove()
-                $('.alert-msg').remove()
-                $('#med_notify_div_' + user_NotifyId).remove()
-                if(!$('#supervisee').html()) Load_landingPage($('#myMedNotify').children().length, 'myMedNotify')
-                else Load_landingPage($('#superviseeMedNotify').children().length, 'superviseeMedNotify')                
+          $('body').on('click', '#confirmBtn', function(){
+            if($('#cancelbtn').prop('disabled')){
+              leave_liff()
+            }else{
+              if($('#submitbtn').length && !$('#supervisee').html()){
+                leave_mineNotify()
+              }else if($('#submitbtn').length && $('#supervisee').html()){
+                leave_contactorNotify()
+              }else{
+                let user_NotifyId = $(this).attr('value')
+                warningDisappear()
+                $.ajax({
+                  url: 'delete-notify',
+                  data: {user_NotifyId: user_NotifyId},
+                  success: function (data){
+                    $('#med_notify_div_' + user_NotifyId).remove()
+                    if(!$('#supervisee').html()) Load_landingPage($('#myMedNotify').children().length, 'myMedNotify')
+                    else Load_landingPage($('#superviseeMedNotify').children().length, 'superviseeMedNotify')                
+                  }
+                })
               }
-            })
-            $('body').css('overflow', 'scroll')
+            }
           })
 
           $('body').on('click', '.deletebtn', function(){
-            let medNotify
-            if(!$('#supervisee').html()) medNotify = 'myMedNotify'
-            else medNotify = 'superviseeMedNotify'
-
-            $(`#${medNotify}`).append(`<div class="alert-bg"></div>
-                                        <div class="alert-msg">
-                                          <img>
-                                          <p>您確定要刪除這筆通知嗎？</p>
-                                          <div class="row justify-content-around">
-                                            <input class="col-sm-4 btn" type="button" value="取消刪除" id="cancelDelbtn">
-                                            <input class="col-sm-4 btn" type="button" value="確認刪除" id="confirmDelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
-                                          </div>
-                                        </div>`)
-
-            $('body').css('overflow', 'hidden')
+            $('#confirmBtn').attr('value', $(this).attr('del_user_NotifyId'))
+            warning()
           })
 
-          $('body').on('click', '#cancelDelbtn', function(){
-            
-            $('.alert-bg').remove()
-            $('.alert-msg').remove()
-            $('body').css('overflow', 'scroll')
-          })
 
           $('body').on('click', '.editbtn', function(){
             let user_NotifyTime = $(this).attr('edit_user_NotifyTime')
@@ -354,28 +351,10 @@
           })
 
           $('body').on('click', '#cancelbtn', function(){
-            $('body').append(`<div class="alert-bg"></div>
-                                        <div class="alert-msg">
-                                          <img>
-                                          <p>資料尚未新增完成<br>您確定要離開此頁面？</p>
-                                          <div class="row justify-content-around">
-                                            <input class="col-sm-4 btn" type="button" value="取消" id="backtoSelbtn">
-                                            <input class="col-sm-4 btn" type="button" value="確認" id="cancelSelbtn" del_user_NotifyId="${$(this).attr('del_user_NotifyId')}">
-                                          </div>
-                                        </div>`)
-              $('body').css('overflow', 'hidden')
+            warningLeave()      
+            $(this).prop('disabled',true)  
           })
 
-          $('body').on('click', '#backtoSelbtn', function(){
-              $('.alert-msg').remove()
-              $('.alert-bg').remove()
-              $('body').css('overflow', 'scroll')
-          })
-
-
-          $('body').on('click', '#cancelSelbtn', function(){
-            liff.closeWindow()
-          })
 
           $('body').on('click', '.switchbtn', function(){                    
             let switch_status

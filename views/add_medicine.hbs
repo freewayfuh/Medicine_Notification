@@ -10,19 +10,21 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="js/pillDetail.js" type="text/javascript"></script>
     <script src="js/navAnimate.js" type="text/javascript"></script>
-    <script src="js/pillBox.js" type="text/javascript"></script>
+    <script src="js/switchPage.js" type="text/javascript"></script>
+    <script src="js/warningBox.js" type="text/javascript"></script>
     <link href="css/pillBox.css" rel="stylesheet">
     <link href="css/pageInit.css" rel="stylesheet">
     <link href="css/medDetail.css" rel="stylesheet">
     <link href="css/contactor.css" rel="stylesheet">
     <link href="css/navBar.css" rel="stylesheet">
+    <link href="css/warningBox.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     
     <title>藥盒</title>
   </head>
   <body>
     <nav style="display: none;">
-      <button><div class="mine">我的藥盒<div id="mine"></div></div></button>
+      <button disabled><div class="mine">我的藥盒<div id="mine"></div></div></button>
       <button><div class="contacter">被提醒人的藥盒<div id="contacter"></div></div></button>	
     </nav>
     <div id="blank_underNavbar" style="display: none;"></br></br></br></div>
@@ -31,6 +33,17 @@
     <div id="superviseePillbox"></div>
     <div id="superviseePillboxs_list" style="display: none;"></div>
     <div id="pillDetail"></div>
+    <div id="warningBox">
+      <div id="hide"></div>
+      <div id="popWindow">
+        <div><img src="img/warning.png"></div>
+        <div>您確定要刪除這筆藥物嗎?</div>
+        <div>
+          <button onclick="cancel()">取消</button>
+          <button id="confirmBtn" value="">確認</button>
+        </div>	  
+      </div>      
+    </div>
     <div id="footer" style="display: none;">
       <div class="blank"></div>
       <div class="blank1"></div>
@@ -48,7 +61,7 @@
                                   </div>
                                   <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
         $('.blank').css('display', 'none')
-        $('#blank_underNavbar').css('display', 'none')
+        //$('#blank_underNavbar').css('display', 'none')
       }
     }
 
@@ -61,7 +74,8 @@
         data: {userId: userId},
         success: function (data){
           $('#footer').css('display', 'initial')
-          $('#blank_underNavbar').css('display', 'initial') 
+          $('.blank').css('display', 'block')
+          //$('#blank_underNavbar').css('display', 'initial') 
           $.each(data.user_Med, function (key, value){
             $(`#${pillBox}`).append(`<div class="item" id="item_${value.user_MedId}">
                                     <div class="med"></div>
@@ -80,14 +94,14 @@
                                       </div>
                                     <div class="line"></div>
                                     <div class="ope">
-                                        <button type="button" value="${value.user_MedId}" onclick="warning(this.value)">
+                                        <button type="button" class="deletebtn" value="${value.user_MedId}">
                                           <div class="delete">
                                             <div></div>
                                             <div>刪除</div>
                                           </div>
                                         </button>
                                         <div class="separate"></div>
-                                        <button id="edit"  type="button" value="${value.user_MedId}">
+                                        <button type="button" class="editbtn" value="${value.user_MedId}">
                                           <div class="edit">
                                             <div></div>
                                             <div>編輯</div>
@@ -96,17 +110,7 @@
                                     </div>
                                   </div>`)
                               
-          })
-          $(`#${pillBox}`).append(`<div id="hide"></div>
-	                                <div id="popWindow">
-	                                    <div><img src="img/warning.png"></div>
-	                                    <div>您確定要刪除這筆藥物嗎?</div>
-                                      <div>
-		                                    <button onclick="cancel()"><div>取消刪除</div></button>
-		                                    <button><div id="delete">確認刪除</div></button>
-	                                    </div>	  
-	                                </div>`)
-          $('.blank').css('display', 'block')                          
+          })                        
 
           if(pillBox == 'myPillbox' && $('#superviseePillboxs_list').children().length == 0){              
             $.each(data.supervise, function (key, value){
@@ -184,18 +188,17 @@
                               </div>                            
                               <div class="blank1"></div>
                               <input id="picURL" type="text" url="">
-                              <button id="cancel" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
-                              <button id="create" class="btn mx-auto create" type="button" value="insert">完成</button>                        
+                              <button id="cancelbtn" class="btn mx-auto cancel" type="button" value="cancel">取消</button>
+                              <button id="createbtn" class="btn mx-auto create" type="button" value="insert">完成</button>                        
                               <input id="med_id" type="hidden" value="">`)
-
-      
+                        
 
     }
 
     function Add_pillDetail(userId, pillBox){
       showWarningMsg()
       if($('#med_name').val() && $('#picURL').attr('url') && $('#total').val() && $('#each').val()){
-        $(this).css('disabled','true')
+        $(this).prop('disabled',true)
         $.ajax({
           url: 'add-med',
           type: 'POST',
@@ -204,13 +207,13 @@
             medName: $('#med_name').val(),
             totalAmount: $('#total').val(),
             onceAmount: $('#each').val(),
-            queryCond: $('#create').val(),
+            queryCond: $('#createbtn').val(),
             user_MedId: $('#med_id').val(),
             medPicture: $('#picURL').attr('url')
           },
           success: function (data){          
             $('#pillDetail').empty()
-            $('#blank_underNavbar').css('display', 'initial')
+            //$('#blank_underNavbar').css('display', 'initial')
             Load_pillBox(userId, pillBox)          
           }
         })
@@ -226,40 +229,43 @@
         $(document).ready(function(){
           Load_pillBox(profile.userId, 'myPillbox')
 
-          $('body').on('click', 'nav button:nth-child(1)', function(){            
-            Nav_mine_animate()
-            $('#myPillbox').css('display', 'initial')
-            $('#superviseePillbox').css('display', 'none')
-            $('#footer').css('display', 'initial')
-            $('#superviseePillboxs_list').css('display', 'none') 
-            $('#pillDetail').empty()
-            $('#supervisee').empty()
+          $('body').on('click', 'nav button:nth-child(1)', function(){
+            if($('#createbtn').length){
+              warningLeave()   
+            }else{                              
+              switchToMinePillBox()
+            }
+/*            
             if($('.blank').css('display')=='none')
-              $('#blank_underNavbar').css('display', 'none') 
+              $('#blank_underNavbar').css('display', 'none')*/ 
           })
           
-          $('body').on('click', 'nav button:nth-child(2)', function(){
-            Nav_contactor_animate()
-            $('#myPillbox').css('display','none')
-            $('#superviseePillbox').css('display', 'none')
-            $('#footer').css('display', 'none')
-            $('#superviseePillboxs_list').css('display', 'initial')
-            $('#pillDetail').empty()
-            $('#supervisee').empty()
-            $('#blank_underNavbar').css('display', 'initial')      
+          $('body').on('click', 'nav button:nth-child(2)', function(){           
+            if($('#createbtn').length){
+              warningLeave()   
+            }else{
+              switchToContactorPillBox()
+              //$('#blank_underNavbar').css('display', 'initial')
+            }      
           })
 
           $('body').on('click', '#add', function(){ 
-            $('#blank_underNavbar').css('display', 'none')       
+            //$('#blank_underNavbar').css('display', 'none')       
             Load_pillDetail()  
           })
 
-          $('body').on('click', '#create', function(){
+          $('body').on('click', '#createbtn', function(){
             if(!$('#supervisee').html()) Add_pillDetail(profile.userId, 'myPillbox')
             else Add_pillDetail($('#supervisee').val(), 'superviseePillbox')
           })
 
-          $('body').on('click', '#edit', function(){
+          $('body').on('click', '.deletebtn', function(){
+            $('#confirmBtn').attr('value', $(this).attr('value'))
+            warning()
+          })
+
+
+          $('body').on('click', '.editbtn', function(){
             $.ajax({
               url: '/edit-med',
               data: {
@@ -268,7 +274,7 @@
               success: function (data){
                 Load_pillDetail()
                 
-                $('#create').val('update')                
+                $('#createbtn').val('update')                
                 $.each(data, function (key, value){   
                   $('#med_name').val(value.medName)
                   $('#total').val(value.totalAmount)
@@ -290,27 +296,35 @@
             })                
           })
 
-          $('body').on('click', '#delete', function(){
-            let user_MedId = $(this).attr('value')
-            $('body').css('overflow','scroll');
-            $('#hide').css('display','none'); 
-            $('#popWindow').css('display','none'); 
-            $.ajax({
-              url: '/delete-med',
-              data: {
-                user_MedId: user_MedId             
-              },
-              success: function (data){
-                $('#item_' + user_MedId).remove()
-                if(!$('#supervisee').html()) Load_landingPage($('#myPillbox').children().length, 'myPillbox')
-                else Load_landingPage($('#superviseePillbox').children().length, 'superviseePillbox')
-
+          $('body').on('click', '#confirmBtn', function(){
+            if($('#cancelbtn').prop('disabled')){
+              leave_liff()
+            }else{
+              if($('#createbtn').length && !$('#supervisee').html()){
+                leave_minePillBox()
+              }else if($('#createbtn').length && $('#supervisee').html()){
+                leave_contactorPillBox()
+              }else{            
+                let user_MedId = $(this).attr('value')
+                warningDisappear()
+                $.ajax({
+                  url: '/delete-med',
+                  data: {
+                    user_MedId: user_MedId             
+                  },
+                  success: function (data){                
+                    $('#item_' + user_MedId).remove()
+                    if(!$('#supervisee').html()) Load_landingPage($('#myPillbox').children().length, 'myPillbox')
+                    else Load_landingPage($('#superviseePillbox').children().length, 'superviseePillbox')
+                  }
+                })
               }
-            })                
+            }         
           })          
 
-          $('body').on('click', '#cancel', function(){
-            liff.closeWindow()       
+          $('body').on('click', '#cancelbtn', function(){
+            warningLeave()      
+            $(this).prop('disabled',true)   
           })   
 
           $('body').on('click', '.supervisee_view', function(){
