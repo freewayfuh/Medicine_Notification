@@ -64,6 +64,10 @@
         $('.btnHeight').css('display', 'none')
         $('.blank').css('display', 'none')
       }
+      else {
+        $('.btnHeight').css('display', 'initial')
+        $('.blank').css('display', 'initial')
+      }
     }
     function Load_medNotify(userId, medNotify){
       $(`#${medNotify}`).empty()
@@ -130,6 +134,8 @@
             if(data.supervise.length != 0){
               $('nav').css('display', 'flex')
               $('#blank_underNavbar').css('display', 'initial')
+              $('.btnHeight').css('display', 'initial')
+              $('.blank').css('display', 'initial')  
             }
           }
           Load_landingPage(Object.keys(data.user_Notify).length, medNotify)
