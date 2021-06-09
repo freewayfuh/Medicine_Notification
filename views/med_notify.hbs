@@ -60,13 +60,7 @@
                                     <div><img src="img/remind.png"></div>
                                     <div>建立藥物提醒</div>
                                     <div>讓您不再困惑藥物種類及服用時間</div>
-                                  </div>`)        
-        $('.btnHeight').css('display', 'none')
-        $('.blank').css('display', 'none')
-      }
-      else {
-        $('.btnHeight').css('display', 'initial')
-        $('.blank').css('display', 'initial')
+                                  </div>`)
       }
     }
     function Load_medNotify(userId, medNotify){
@@ -133,9 +127,7 @@
 
             if(data.supervise.length != 0){
               $('nav').css('display', 'flex')
-              $('#blank_underNavbar').css('display', 'initial')
-              $('.btnHeight').css('display', 'initial')
-              $('.blank').css('display', 'initial')  
+              $('#blank_underNavbar').css('display', 'initial') 
             }
           }
           Load_landingPage(Object.keys(data.user_Notify).length, medNotify)
