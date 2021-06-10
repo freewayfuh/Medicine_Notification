@@ -27,26 +27,24 @@ font-size:4vw;
 font-weight:bold;
 }
 
-.add_new{ 
-grid-area: 2/5/3/6;
-}
+
 
 .view{ 
 grid-area: 2/7/3/8;
 }
 
-.add_new,.view{
+.view{
 display:flex;
 align-items:center;  
 }
-.add_new button,.view button{
+button,.view button{
 background-color:transparent;
 border:0;
 padding:0;
 border-radius:5vw;  
 }
 
-#add_new,#view{
+#view{
 display:flex;
 justify-content:center;
 align-items:center;
@@ -55,18 +53,12 @@ height:10vw;
 border-radius:5vw;
 color:white;
 font-size:4vw;
-font-weight:bold;  
+font-weight:bold;
+background-color:#f3be00;  
 }
 
-#add_new{
-background-color:#27ae60;	
-}
 
-#view{
-background-color:#f3be00;	
-}
-
-#add_new img,#view img{
+#view img{
 width:4.5vw;
 height:4.5vw;
 margin-right:2vw;

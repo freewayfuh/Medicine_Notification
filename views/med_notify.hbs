@@ -106,14 +106,6 @@
               $('#superviseeMedNotifys_list').append(`<div class="contacter_med">
                                                         <div class="profile" style="background-image:url(${value.picture})"></div>
                                                         <div class="appellation">${value.userName}</div>
-                                                        <div class="add_new">
-                                                          <button class="btn mx-auto supervisee_add" value="${value.userId}" userName="${value.userName}">
-                                                            <div id="add_new">
-                                                              <div><img src="img/add.png"></div>
-                                                              <div>新增</div>
-                                                            </div>
-                                                          </button>
-                                                        </div>
                                                         <div class="view">
                                                           <button class="btn mx-auto supervisee_view" value="${value.userId}" userName="${value.userName}">
                                                             <div id="view">
@@ -375,15 +367,7 @@
             $('#supervisee').val($(this).val())
             $('#supervisee').html($(this).attr('userName'))
             Load_medNotify($(this).val(), 'superviseeMedNotify')
-          })
-
-          $('body').on('click', '.supervisee_add', function(){
-            $('#superviseeMedNotifys_list').css('display', 'none')
-            $('#supervisee').val($(this).val())
-            $('#supervisee').html($(this).attr('userName'))
-            Load_pickMed($(this).val())     
-
-          })               
+          })            
 
         })      
         
