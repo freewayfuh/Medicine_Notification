@@ -96,22 +96,23 @@ app.post('/add-med', (req, res) => {
       })
       connection.query(`INSERT INTO user_Med(medName, totalAmount, onceAmount, medPicture, userId) VALUES ('${req.body.medName}', ${req.body.totalAmount}, ${req.body.onceAmount}, 'img/medPic/${picName}', '${req.body.userId}')`,(err, result) => {
         if(err) console.log('fail to insert:', err)
-        res.send('insert success')
+        res.send()
       })
          
     })
   }else if(req.body.queryCond == 'update'){
-    connection.query(`UPDATE user_Med SET medName='${req.body.medName}', totalAmount=${req.body.totalAmount}, onceAmount=${req.body.onceAmount} WHERE user_MedId=${req.body.user_MedId}`,(err, result) => {
+    d = new Date()
+    connection.query(`UPDATE user_Med SET medName='${req.body.medName}', totalAmount=${req.body.totalAmount}, onceAmount=${req.body.onceAmount}, medPicture='img/medPic/${req.body.user_MedId}.png?${d.getTime()}' WHERE user_MedId=${req.body.user_MedId}`,(err, result) => {
       if(err) console.log('fail to update:', err)
       if(req.body.medPicture != 'unchange'){
         fs.writeFile(`./dist/img/medPic/${req.body.user_MedId}.png`, req.body.medPicture.split('base64,')[1], 'base64', function(err) {
           console.log(err)
-          res.send('update success')
+          res.send('update picture')
         })
       }else{
         res.send()
       }
-    })     
+    })         
   }
 })
 
@@ -317,7 +318,7 @@ function run() {
                   type : "postback",
                   label : "吃了",
                   text : "吃了",
-                  data : `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}`
+                  data : `${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}, ${result[i]['user_NotifyId']}`
                 }
             ]
         }
@@ -440,18 +441,24 @@ function handleEvent(event) {
       text: '收到'
     }];
 
-    connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${event.postback.data}' AND userId = '${event.source.userId}'`, (err, result) => {
+    postback_data = event.postback.data.split(', ')
+    connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${postback_data[0]}' AND userId = '${event.source.userId}'`, (err, result) => {
       if (err) console.log('fail to DELETE:', err)
     })
     
-    connection.query(`UPDATE user_Med SET totalAmount = totalAmount - onceAmount WHERE userId = '${event.source.userId}' AND totalAmount >= onceAmount`, (err, result) => {
+    connection.query(`UPDATE user_Med 
+                      INNER JOIN Notify_Med ON user_Med.user_MedId = Notify_Med.user_MedId
+                      AND Notify_Med.user_NotifyId = ${postback_data[1]}
+                      AND user_Med.totalAmount >= user_Med.onceAmount
+                      SET user_Med.totalAmount = user_Med.totalAmount - user_Med.onceAmount`
+                      , (err, result) => {
       if (err) console.log('fail to UPDATE:', err)
     })
 
     connection.query(`SELECT medName, totalAmount, onceAmount FROM user_Med WHERE userId = '${event.source.userId}'`, (err, result) => {
       if (err) console.log('fail to SELECT', err)
-      console.log(result)
-      console.log()
+      //console.log(result)
+      //console.log()
 
       for (var i = 0; i < result.length; i++) {
         if (result[i].totalAmount <= result[i].onceAmount * 3) {

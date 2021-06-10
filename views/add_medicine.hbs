@@ -78,37 +78,37 @@
           //$('#blank_underNavbar').css('display', 'initial') 
           $.each(data.user_Med, function (key, value){
             $(`#${pillBox}`).append(`<div class="item" id="item_${value.user_MedId}">
-                                    <div class="med"></div>
-                                      <div class="image" style="background-image:url(${value.medPicture})"></div>
-                                      <div class="info"></div>
-                                      <div class="name">${value.medName}</div>
-                                      <div class="number">
-                                        <div class="three">
-                                          <div class="one">${value.totalAmount}</div>
-                                          <div class="two">剩餘藥物</div>
+                                      <div class="med"></div>
+                                        <div class="image" id="image_${value.user_MedId}" style="background-image:url(${value.medPicture})"></div>
+                                        <div class="info"></div>
+                                        <div class="name">${value.medName}</div>
+                                        <div class="number">
+                                          <div class="three">
+                                            <div class="one">${value.totalAmount}</div>
+                                            <div class="two">剩餘藥物</div>
+                                          </div>
+                                          <div class="three">
+                                            <div class="one">${value.onceAmount}</div>
+                                            <div class="two">每次劑量</div>
+                                          </div>
                                         </div>
-                                        <div class="three">
-                                          <div class="one">${value.onceAmount}</div>
-                                          <div class="two">每次劑量</div>
-                                        </div>
+                                      <div class="line"></div>
+                                      <div class="ope">
+                                          <button type="button" class="deletebtn" value="${value.user_MedId}">
+                                            <div class="delete">
+                                              <div></div>
+                                              <div>刪除</div>
+                                            </div>
+                                          </button>
+                                          <div class="separate"></div>
+                                          <button type="button" class="editbtn" value="${value.user_MedId}">
+                                            <div class="edit">
+                                              <div></div>
+                                              <div>編輯</div>
+                                            </div>
+                                          </button>
                                       </div>
-                                    <div class="line"></div>
-                                    <div class="ope">
-                                        <button type="button" class="deletebtn" value="${value.user_MedId}">
-                                          <div class="delete">
-                                            <div></div>
-                                            <div>刪除</div>
-                                          </div>
-                                        </button>
-                                        <div class="separate"></div>
-                                        <button type="button" class="editbtn" value="${value.user_MedId}">
-                                          <div class="edit">
-                                            <div></div>
-                                            <div>編輯</div>
-                                          </div>
-                                        </button>
-                                    </div>
-                                  </div>`)
+                                    </div>`)
                               
           })                        
 
@@ -211,10 +211,9 @@
             user_MedId: $('#med_id').val(),
             medPicture: $('#picURL').attr('url')
           },
-          success: function (data){          
+          success: function (data){
             $('#pillDetail').empty()
-            //$('#blank_underNavbar').css('display', 'initial')
-            Load_pillBox(userId, pillBox)          
+            Load_pillBox(userId, pillBox)
           }
         })
       }  
