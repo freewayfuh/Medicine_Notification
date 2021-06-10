@@ -268,10 +268,6 @@ function run() {
     })
   }
 
-  // connection.query(`SELECT * FROM user_Notify WHERE switch = 'checked'`, (err, result) => {
-  //   if (err) console.log('fail to SELECT:', err)
-  //   console.log(result)
-  // })
 
   connection.query(`SELECT user_NotifyId, notifyTime, userId FROM user_Notify WHERE switch = 'checked' AND notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'
                     UNION SELECT user_NotifyId, notifyTime, userId FROM user_Notify_temp WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'`, (err, result) => {
@@ -353,14 +349,6 @@ function run() {
       // 因為非同步問題，所以要讓 replyMessage 延後一秒再執行，才會有所有訊息
       setTimeout(function(){client.pushMessage(r, message);}, 1000)
 
-      // var r = result[i]['userId']
-      // client.pushMessage(r, drug)
-      // setTimeout(function(){client.pushMessage(r, carousel_msg);}, 1000)
-      // setTimeout(function(){client.pushMessage(r, check_message);}, 2000)
-
-      // client.pushMessage(r, drug)
-      // client.pushMessage(r, carousel_msg)
-      // client.pushMessage(r, check_message)
     }
   })
 }
@@ -368,7 +356,7 @@ function run() {
 setInterval(run, 1000)
 
 function handleEvent(event) {
-
+  console.log(event)
   if(event.type == 'follow'){
     client.getProfile(event.source.userId).then((profile) => {
       
@@ -415,23 +403,10 @@ function handleEvent(event) {
     })
   }
 
-  if (event.type == 'message') {
-    if (event.message.text == '吃了') {
-      console.log('吃藥了')
-      var now = new Date()
-      connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${now.getHours()}:${now.getMinutes()}:00'
-                        AND userId = '${event.source.userId}'`, (err, result) => {
-        if(err) console.log('fail to delete:', err)
-      })
-    }
-
-  }
-
-
-  console.log(event)
   if (event.type !== 'message' || event.message.type !== 'text') {
     return Promise.resolve(null)
   }
+
 
   if (event.message.id == '100001') return 200 // to deal with verify dummy data
 
@@ -441,7 +416,9 @@ function handleEvent(event) {
       text: '收到'
     }];
 
+
     postback_data = event.postback.data.split(', ')
+
     connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${postback_data[0]}' AND userId = '${event.source.userId}'`, (err, result) => {
       if (err) console.log('fail to DELETE:', err)
     })
@@ -457,8 +434,8 @@ function handleEvent(event) {
 
     connection.query(`SELECT medName, totalAmount, onceAmount FROM user_Med WHERE userId = '${event.source.userId}'`, (err, result) => {
       if (err) console.log('fail to SELECT', err)
-      //console.log(result)
-      //console.log()
+      // console.log(result)
+      // console.log()
 
       for (var i = 0; i < result.length; i++) {
         if (result[i].totalAmount <= result[i].onceAmount * 3) {
@@ -474,7 +451,7 @@ function handleEvent(event) {
 
     // 因為非同步問題，所以要讓 replyMessage 延後一秒再執行，才會有所有訊息
     setTimeout(function(){client.replyMessage(event.replyToken, message);}, 1000)   // replyToken 只能用一次
-  }  
+  }
 
 }
 
