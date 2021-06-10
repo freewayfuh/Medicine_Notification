@@ -5,7 +5,6 @@
     grid-column-gap: 0px;
     grid-row-gap: 0px;
 }
-
 .profile{ 
     grid-area: 2/2/3/3;
     border-radius:50%;
@@ -18,7 +17,6 @@
     max-width:100%;
     max-height:100%;
 }
-
 .appellation{ 
 grid-area: 2/4/3/5;
 display:flex;
@@ -26,24 +24,17 @@ align-items:center;
 font-size:4vw;
 font-weight:bold;
 }
-
-
-
 .view{ 
 grid-area: 2/7/3/8;
-}
-
-.view{
 display:flex;
-align-items:center;  
+align-items:center;
 }
-button,.view button{
+.view button{
 background-color:transparent;
 border:0;
 padding:0;
 border-radius:5vw;  
 }
-
 #view{
 display:flex;
 justify-content:center;
@@ -56,8 +47,6 @@ font-size:4vw;
 font-weight:bold;
 background-color:#f3be00;  
 }
-
-
 #view img{
 width:4.5vw;
 height:4.5vw;
