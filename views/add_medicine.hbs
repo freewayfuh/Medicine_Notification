@@ -56,12 +56,19 @@
         $(`#${pillBox}`).empty()
         $(`#${pillBox}`).append(`<div class="add_med">
                                     <div><img src="img/MED.png"></div>
-                                    <div>建立我的藥盒</div>
-                                    <div>新增目前服用的藥物至線上藥盒</div>
+                                    <div></div>
+                                    <div></div>
                                   </div>
                                   <button class="btn btn-dark mx-auto" id="add" type="button">新增藥物</button>`)
         
         
+      }
+      if(pillBox == 'myPillbox'){
+        $('.add_med div:nth-child(2)').html('建立我的藥盒')
+        $('.add_med div:nth-child(3)').html('新增目前服用的藥物至線上藥盒')
+      }else{
+        $('.add_med div:nth-child(2)').html('建立他的藥盒')
+        $('.add_med div:nth-child(3)').html('新增他目前服用的藥物至線上藥盒')        
       }
     }
 
@@ -118,7 +125,7 @@
                                                       <div class="profile" style="background-image:url(${value.picture})"></div>
                                                       <div class="appellation">${value.userName}</div>
                                                       <div class="view">
-                                                        <button class="btn mx-auto supervisee_view" value="${value.userId}" userName="${value.userName}">
+                                                        <button class="btn mx-auto supervisee_view" value="${value.userId}" superviseeName="${value.userName}" superviseePicture="${value.picture}">
                                                           <div id="view">
                                                             <div><img src="img/view.png"></div>
                                                           <div>查看</div>
@@ -233,7 +240,6 @@
               warningLeave()   
             }else{
               switchToContactorPillBox()
-              //$('#blank_underNavbar').css('display', 'initial')
             }      
           })
 
@@ -243,7 +249,7 @@
           })
 
           $('body').on('click', '#createbtn', function(){
-            if(!$('#supervisee').html()) Add_pillDetail(profile.userId, 'myPillbox')
+            if($('#supervisee').children().length == 0) Add_pillDetail(profile.userId, 'myPillbox')
             else Add_pillDetail($('#supervisee').val(), 'superviseePillbox')
           })
 
@@ -289,9 +295,9 @@
             if($('#cancelbtn').prop('disabled')){
               leave_liff()
             }else{
-              if($('#createbtn').length && !$('#supervisee').html()){
+              if($('#createbtn').length && $('#supervisee').children().length == 0){
                 leave_minePillBox()
-              }else if($('#createbtn').length && $('#supervisee').html()){
+              }else if($('#createbtn').length && $('#supervisee').children().length != 0){
                 leave_contactorPillBox()
               }else{            
                 let user_MedId = $(this).attr('value')
@@ -303,7 +309,7 @@
                   },
                   success: function (data){                
                     $('#item_' + user_MedId).remove()
-                    if(!$('#supervisee').html()) Load_landingPage($('#myPillbox').children().length, 'myPillbox')
+                    if($('#supervisee').children().length == 0) Load_landingPage($('#myPillbox').children().length, 'myPillbox')
                     else Load_landingPage($('#superviseePillbox').children().length, 'superviseePillbox')
                   }
                 })
@@ -319,7 +325,8 @@
           $('body').on('click', '.supervisee_view', function(){
             $('#superviseePillboxs_list').css('display', 'none')
             $('#supervisee').val($(this).val())
-            $('#supervisee').html($(this).attr('userName'))
+            $('#supervisee').append(`<div style="background-image:url(${$(this).attr('superviseePicture')})"></div>
+	                                   <div>${$(this).attr('superviseeName')}</div>`)
             Load_pillBox($(this).val(), 'superviseePillbox')
           })
 

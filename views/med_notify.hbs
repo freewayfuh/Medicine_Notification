@@ -59,9 +59,14 @@
         $(`#${medNotify}`).append(`<div class="add_remind">
                                     <div><img src="img/remind.png"></div>
                                     <div>建立藥物提醒</div>
-                                    <div>讓您不再困惑藥物種類及服用時間</div>
-                                  </div>`)
+                                    <div></div>
+                                  </div>`)                                  
       }
+      if(medNotify == 'myMedNotify'){
+        $('.add_remind div:nth-child(3)').html('讓您不再困惑藥物種類及服用時間')
+      }else{
+        $('.add_remind div:nth-child(3)').html('讓他不再困惑藥物種類及服用時間')        
+      } 
     }
     function Load_medNotify(userId, medNotify){
       $(`#${medNotify}`).empty()
@@ -107,7 +112,7 @@
                                                         <div class="profile" style="background-image:url(${value.picture})"></div>
                                                         <div class="appellation">${value.userName}</div>
                                                         <div class="view">
-                                                          <button class="btn mx-auto supervisee_view" value="${value.userId}" userName="${value.userName}">
+                                                          <button class="btn mx-auto supervisee_view" value="${value.userId}" superviseeName="${value.userName}" superviseePicture="${value.picture}">
                                                             <div id="view">
                                                               <div><img src="img/view.png"></div>
                                                             <div>查看</div>
@@ -226,7 +231,7 @@
           })          
 
           $('body').on('click', '#add', function(){ 
-            if(!$('#supervisee').html()) Load_pickMed(profile.userId)
+            if($('#supervisee').children().length == 0) Load_pickMed(profile.userId)
             else Load_pickMed($('#supervisee').val())                           
           })                
 
@@ -268,7 +273,7 @@
 
 
           $('body').on('click', '#submitbtn', function(){
-            if(!$('#supervisee').html()) Add_medNotify(profile.userId, 'myMedNotify')
+            if($('#supervisee').children().length == 0) Add_medNotify(profile.userId, 'myMedNotify')
             else Add_medNotify($('#supervisee').val(), 'superviseeMedNotify')  
             $('.btnHeight').css('display', 'block')
             $('.blank').css('display', 'initial')
@@ -278,9 +283,9 @@
             if($('#cancelbtn').prop('disabled')){
               leave_liff()
             }else{
-              if($('#submitbtn').length && !$('#supervisee').html()){
+              if($('#submitbtn').length && $('#supervisee').children().length == 0){
                 leave_mineNotify()
-              }else if($('#submitbtn').length && $('#supervisee').html()){
+              }else if($('#submitbtn').length && $('#supervisee').children().length != 0){
                 leave_contactorNotify()
               }else{
                 let user_NotifyId = $(this).attr('value')
@@ -290,7 +295,7 @@
                   data: {user_NotifyId: user_NotifyId},
                   success: function (data){
                     $('#med_notify_div_' + user_NotifyId).remove()
-                    if(!$('#supervisee').html()) Load_landingPage($('#myMedNotify').children().length, 'myMedNotify')
+                    if($('#supervisee').children().length == 0) Load_landingPage($('#myMedNotify').children().length, 'myMedNotify')
                     else Load_landingPage($('#superviseeMedNotify').children().length, 'superviseeMedNotify')                
                   }
                 })
@@ -307,7 +312,7 @@
           $('body').on('click', '.editbtn', function(){
             let user_NotifyTime = $(this).attr('edit_user_NotifyTime')
             let user_NotifyId = $(this).attr('edit_user_NotifyId')
-            if(!$('#supervisee').html()) Load_pickMed(profile.userId)
+            if($('#supervisee').children().length == 0) Load_pickMed(profile.userId)
             else Load_pickMed($('#supervisee').val())                 
                
 
@@ -365,7 +370,8 @@
           $('body').on('click', '.supervisee_view', function(){
             $('#superviseeMedNotifys_list').css('display', 'none')
             $('#supervisee').val($(this).val())
-            $('#supervisee').html($(this).attr('userName'))
+            $('#supervisee').append(`<div style="background-image:url(${$(this).attr('superviseePicture')})"></div>
+	                                   <div>${$(this).attr('superviseeName')}</div>`)
             Load_medNotify($(this).val(), 'superviseeMedNotify')
           })            
 
