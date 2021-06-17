@@ -52,6 +52,7 @@ function readURL(input){
 
 
 function inputnumber(V){
+	if(V.value.indexOf('-')!=-1) V.value=0
 	if(V.value>=1000) V.value=V.value.slice(0,3)
 	if(V.value.slice(0,1)==0){
 		if(V.value.indexOf('.')!=-1) V.value=V.value

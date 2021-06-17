@@ -81,7 +81,6 @@
         success: function (data){
           $('#footer').css('display', 'initial')
           $('.blank').css('display', 'block')
-          $('#blank_underNavbar').css('display', 'initial') 
           $.each(data.user_Med, function (key, value){
             $(`#${pillBox}`).append(`<div class="item" id="item_${value.user_MedId}">
                                       <div class="med"></div>
@@ -243,7 +242,6 @@
           })
 
           $('body').on('click', '#add', function(){ 
-            $('#blank_underNavbar').css('display', 'none')       
             Load_pillDetail()  
           })
 
@@ -266,7 +264,6 @@
               },
               success: function (data){
                 Load_pillDetail()
-                $('#blank_underNavbar').css('display', 'none')
                 $('#createbtn').val('update')                
                 $.each(data, function (key, value){   
                   $('#med_name').val(value.medName)
@@ -290,7 +287,6 @@
           })
 
           $('body').on('click', '#confirmBtn', function(){
-            $('#blank_underNavbar').css('display', 'initial')
             if($('#cancelbtn').prop('disabled')){
               leave_liff()
             }else{

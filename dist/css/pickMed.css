@@ -19,12 +19,12 @@ input[type='checkbox'] {
 }
 
 
-input[type="text"], pre {
+input[type="number"], pre {
     font-size: 16vw;
     display: inline;    
 }
 
-input[type="text"] {
+input[type="number"] {
     border: none;
     width: 2.5em;
     text-align: center;
@@ -60,9 +60,7 @@ input[type="text"] {
     background-color: #27AE60;
 }
 
-/* #nextbtn-disabled {
-    
-} */
+
 
 #nextbtn:hover, #submitbtn:hover,#nextbtn:active, #submitbtn:active {
     background-color: #219357;
@@ -74,6 +72,7 @@ input[type="text"] {
 
 .timeCheck {
     text-align: center;
+    font-size: 16vw;
 }
 
 
@@ -85,10 +84,9 @@ input[type="text"] {
     width: 100vw;
     padding: 5vw;
     margin: 0;
-    position: relative;
-    left: -2vw!important;
+    position:sticky;
+    left: 0vw!important;
 }
-
 
 
 

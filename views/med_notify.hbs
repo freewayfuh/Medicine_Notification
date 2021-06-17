@@ -146,9 +146,9 @@
 
           $('#pickMedPage').append(`<div class="timeCheck">
                                       <div class="mx-auto my-5">
-                                        <input type="text" id="hour" name="hour" placeholder="00" value="">
+                                        <input type="number" id="hour" name="hour" placeholder="00" value="" oninput="HourCheck(this)">
                                         :
-                                        <input type="text" id="min" name="min" placeholder="00" value="">
+                                        <input type="number" id="min" name="min" placeholder="00" value="" oninput="MinCheck(this)">
                                       </div>  
                                     </div>                          
                                     <div class="pillCheck">           
