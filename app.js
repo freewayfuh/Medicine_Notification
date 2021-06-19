@@ -130,7 +130,7 @@ app.get('/delete-med', (req, res) => {
   connection.query(`DELETE FROM user_Med WHERE user_MedId=${req.query.user_MedId}`,(err, result) => {
     if(err) console.log('fail to delete:', err)
     fs.unlink(`./dist/img/medPic/${req.query.user_MedId}.png`, (err) => {
-      if(err) throw err
+      if(err) console.log(err)
     })
     connection.query(`DELETE FROM user_Notify WHERE user_NotifyId NOT IN(SELECT DISTINCT user_NotifyId FROM Notify_Med)`,(err, result) => {
       if(err) console.log('fail to delete:', err)
