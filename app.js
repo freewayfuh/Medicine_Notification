@@ -314,13 +314,64 @@ function run() {
       connection.query(`UPDATE user_Notify_temp SET time = time + 1 WHERE userId = '${result[i]['userId']}'`, (err, result) => {
         if (err) console.log('fail to UPDATE:', err)
       })
+      
+      // person = result[i]['userId']
 
       // 提醒三次就停止提醒
-      connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result) => {
-        if (err) console.log('fail to DELETE:', err)
+      // connection.query(`SELECT * FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result1) => {
+      //   if (err) console.log('fail to SELECT:', err)
+      //   console.log('不吃藥的ID:', result[i]['userId'])
+
+      //   if (result.length != 0) {
+      //     connection.query(`SELECT supervisorId FROM Supervise WHERE superviseeId = '${result[i]['userId']}'`, (err, result2) => {
+      //       if (err) console.log('fail to SELECT:', err)
+  
+      //       // 沒有監督人就不執行
+      //       if (result.length != 0) {
+      //         var warning = [{
+      //           type: 'text',
+      //           text: `${result[i]['userId']}沒吃藥`
+      //         }]
+              
+      //         console.log('要通知的ID:', result)
+      //         for (var j = 0; j < result.length; j++) {
+      //           client.pushMessage(result[j]['supervisorId'], warning)
+      //         }
+      //       }
+      //     })
+      //   }
+        
+      //   connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result) => {
+      //     if (err) console.log('fail to DELETE:', err)
+      //   })
+      // })
+
+      connection.query(`SELECT * FROM user_Notify_temp
+                        INNER JOIN Supervise ON user_Notify_temp.userId = Supervise.superviseeId
+                        INNER JOIN user_Info ON user_Notify_temp.userId = user_Info.userId
+                        WHERE user_Notify_temp.userId = '${result[i]['userId']}' AND time = 2`
+                        , (err, result) => {
+        console.log('測試 :', result)
+
+        if (result.length != 0) {
+          for (var j = 0; j < result.length; j++) {
+            console.log('要通知的人:', result[j]['userName'])
+            
+            var warning = [{
+              type: 'text',
+              text: `${result[j]['userName']}沒吃藥`
+            }]
+
+            client.pushMessage(result[j]['supervisorId'], warning)
+          }
+  
+          connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[0]['userId']}'`, (err, result) => {
+            if (err) console.log('fail to DELETE:', err)
+          })
+        }
       })
 
-      connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 10 MINUTE) WHERE user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+      connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 1 MINUTE) WHERE user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
         if (err) console.log('fail to UPDATE:', err)
       })
       
@@ -332,7 +383,7 @@ function run() {
 
         result.forEach(element => {
           carousel_msg.template.columns.push({
-            "imageUrl": `https://luffy.ee.ncku.edu.tw:7128/${element.medPicture}`,
+            "imageUrl": `https://luffy.ee.ncku.edu.tw:1516/${element.medPicture}`,
             "action": {
               "type": "message",
               "label": `${element.medName}，${element.onceAmount}顆`,
@@ -375,7 +426,7 @@ function handleEvent(event) {
       "altText": "this is a buttons template",
       "template": {
         "type": "buttons",
-        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:7128/img/drugbox_template.jpg",
+        "thumbnailImageUrl": "https://luffy.ee.ncku.edu.tw:1516/img/drugbox_template.jpg",
         "imageAspectRatio": "rectangle",
         "imageSize": "cover",
         "title": "建立我的藥盒",
@@ -384,12 +435,12 @@ function handleEvent(event) {
           {
             "type": "uri",
             "label": "新增藥物",
-            "uri" : "https://liff.line.me/1655949102-WX1rbAJw"
+            "uri" : "https://liff.line.me/1655992059-rQ4pnw5w"
           },
           {
             "type":"uri",
             "label":"新增提醒",
-            "uri":"https://liff.line.me/1655949102-QOy7mkzW"
+            "uri":"https://liff.line.me/1655992059-PDq7RaJa"
           }
         ]
       }
@@ -439,10 +490,8 @@ function handleEvent(event) {
           )
         }
       }
+      client.replyMessage(event.replyToken, message)
     })
-
-    // 因為非同步問題，所以要讓 replyMessage 延後一秒再執行，才會有所有訊息
-    setTimeout(function(){client.replyMessage(event.replyToken, message);}, 1000)   // replyToken 只能用一次
   }
 
 }
