@@ -224,7 +224,6 @@ app.get('/delete-notify', (req, res) => {
     if(err) console.log('fail to delete:', err)
     res.send('delete success')
   })
-
 })
 
 app.get('/switch-notify', (req, res) =>{
@@ -263,13 +262,22 @@ function run() {
   var now = new Date()
 
   if (now.getSeconds() == 0) {  // 這樣就只會執行一次
-    connection.query(`INSERT INTO user_Notify_temp SELECT * FROM user_Notify WHERE switch = 'checked' AND notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`, (err, result) => {
+    connection.query(`INSERT INTO user_Notify_temp
+                      SELECT * FROM user_Notify
+                      WHERE switch = 'checked'
+                      AND notifyTime = '${now.getHours()}:${now.getMinutes()}:00'`
+                      , (err, result) => {
       if (err) console.log('fail to INSERT:', err)
     })
   }
 
-  connection.query(`SELECT user_NotifyId, notifyTime, userId FROM user_Notify WHERE switch = 'checked' AND notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'
-                    UNION SELECT user_NotifyId, notifyTime, userId FROM user_Notify_temp WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'`, (err, result) => {
+  connection.query(`SELECT user_NotifyId, notifyTime, userId FROM user_Notify
+                    WHERE switch = 'checked'
+                    AND notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'
+                    UNION
+                    SELECT user_NotifyId, notifyTime, userId FROM user_Notify_temp
+                    WHERE notifyTime = '${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}'`
+                    , (err, result) => {
     if (err) console.log('fail to SELECT:', err)
     if (result.length == 0) return;
     console.log(result)
@@ -311,47 +319,19 @@ function run() {
 
     for (var i = 0; i < result.length; i++) {
       // 次數+1
-      connection.query(`UPDATE user_Notify_temp SET time = time + 1 WHERE userId = '${result[i]['userId']}'`, (err, result) => {
+      connection.query(`UPDATE user_Notify_temp SET time = time + 1
+                        WHERE user_NotifyId = '${result[i]['user_NotifyId']}'`
+                        , (err, result) => {
         if (err) console.log('fail to UPDATE:', err)
       })
-      
-      // person = result[i]['userId']
 
       // 提醒三次就停止提醒
-      // connection.query(`SELECT * FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result1) => {
-      //   if (err) console.log('fail to SELECT:', err)
-      //   console.log('不吃藥的ID:', result[i]['userId'])
-
-      //   if (result.length != 0) {
-      //     connection.query(`SELECT supervisorId FROM Supervise WHERE superviseeId = '${result[i]['userId']}'`, (err, result2) => {
-      //       if (err) console.log('fail to SELECT:', err)
-  
-      //       // 沒有監督人就不執行
-      //       if (result.length != 0) {
-      //         var warning = [{
-      //           type: 'text',
-      //           text: `${result[i]['userId']}沒吃藥`
-      //         }]
-              
-      //         console.log('要通知的ID:', result)
-      //         for (var j = 0; j < result.length; j++) {
-      //           client.pushMessage(result[j]['supervisorId'], warning)
-      //         }
-      //       }
-      //     })
-      //   }
-        
-      //   connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[i]['userId']}' AND time = 3`, (err, result) => {
-      //     if (err) console.log('fail to DELETE:', err)
-      //   })
-      // })
-
       connection.query(`SELECT * FROM user_Notify_temp
                         INNER JOIN Supervise ON user_Notify_temp.userId = Supervise.superviseeId
                         INNER JOIN user_Info ON user_Notify_temp.userId = user_Info.userId
-                        WHERE user_Notify_temp.userId = '${result[i]['userId']}' AND time = 2`
+                        WHERE user_Notify_temp.userId = '${result[i]['userId']}' AND time = 4`
                         , (err, result) => {
-        console.log('測試 :', result)
+        // console.log('測試 :', result)
 
         if (result.length != 0) {
           for (var j = 0; j < result.length; j++) {
@@ -364,18 +344,25 @@ function run() {
 
             client.pushMessage(result[j]['supervisorId'], warning)
           }
-  
-          connection.query(`DELETE FROM user_Notify_temp WHERE userId = '${result[0]['userId']}'`, (err, result) => {
-            if (err) console.log('fail to DELETE:', err)
-          })
         }
       })
 
-      connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 1 MINUTE) WHERE user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+      connection.query(`DELETE FROM user_Notify_temp
+                        WHERE time = 4`
+                        , (err, result) => {
+        if (err) console.log('fail to DELETE:', err)
+      })
+
+      connection.query(`UPDATE user_Notify_temp SET notifyTime = DATE_ADD(notifyTime, INTERVAL 1 MINUTE)
+                        WHERE user_NotifyId = ${result[i]['user_NotifyId']}`
+                        , (err, result) => {
         if (err) console.log('fail to UPDATE:', err)
       })
       
-      connection.query(`SELECT * FROM user_Med, Notify_Med WHERE user_Med.user_MedId = Notify_Med.user_MedId AND Notify_Med.user_NotifyId = ${result[i]['user_NotifyId']}`, (err, result) => {
+      connection.query(`SELECT * FROM user_Med, Notify_Med
+                        WHERE user_Med.user_MedId = Notify_Med.user_MedId
+                        AND Notify_Med.user_NotifyId = ${result[i]['user_NotifyId']}`
+                        , (err, result) => {
         if (err) console.log('fail to UPDATE:', err)
 
         carousel_msg.template.columns = []
@@ -450,7 +437,9 @@ function handleEvent(event) {
   }
 
   if(event.type == 'unfollow'){
-    connection.query(`DELETE FROM user_Info WHERE userId='${event.source.userId}'`, (err, result) => {
+    connection.query(`DELETE FROM user_Info
+                      WHERE userId='${event.source.userId}'`
+                      , (err, result) => {
       if(err) console.log('fail to delete:', err)
     })
   }
@@ -463,7 +452,10 @@ function handleEvent(event) {
 
     postback_data = event.postback.data.split(', ')
 
-    connection.query(`DELETE FROM user_Notify_temp WHERE notifyTime >= '${postback_data[0]}' AND userId = '${event.source.userId}'`, (err, result) => {
+    connection.query(`DELETE FROM user_Notify_temp
+                      WHERE notifyTime >= '${postback_data[0]}'
+                      AND user_NotifyId = '${postback_data[1]}'`
+                      , (err, result) => {
       if (err) console.log('fail to DELETE:', err)
     })
     
@@ -476,7 +468,9 @@ function handleEvent(event) {
       if (err) console.log('fail to UPDATE:', err)
     })
 
-    connection.query(`SELECT medName, totalAmount, onceAmount FROM user_Med WHERE userId = '${event.source.userId}'`, (err, result) => {
+    connection.query(`SELECT medName, totalAmount, onceAmount FROM user_Med
+                      WHERE userId = '${event.source.userId}'`
+                      , (err, result) => {
       if (err) console.log('fail to SELECT', err)
 
 
